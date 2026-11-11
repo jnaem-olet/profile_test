@@ -43,6 +43,30 @@
       width: 40%;
       color: #555;
     }
+        .idea-row {
+      display: flex;
+      gap: 15px;
+    }
+    .idea-box {
+      flex: 1;
+      background: #f4f6fb;
+      border: 1px solid #dde3f0;
+      border-radius: 10px;
+      padding: 15px;
+    }
+    .idea-box h3 {
+      margin: 0 0 8px;
+      color: #2c3e70;
+      font-size: 16px;
+    }
+    .idea-box p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    @media (max-width: 600px) {
+      .idea-row { flex-direction: column; }
+    }
   </style>
 </head>
 <body>
@@ -58,7 +82,7 @@
   </section>
 
   <section>
-    <h2>Jeongnam Sung</h2>
+    <h2>Jeongnam</h2>
     <table>
       <tr><th>Nationality</th><td>South Korean</td></tr>
       <tr><th>Educational Background</th><td>Material Science and Engineering</td></tr>
@@ -83,5 +107,24 @@
       <tr><th>IT Skills</th><td>React, JavaScript, Node.js</td></tr>
     </table>
   </section>
+
+    <section>
+    <h2>Project Ideas</h2>
+    <div class="idea-row">
+      <div class="idea-box">
+        <h3>Idea 1</h3>
+        <p>...</p>
+      </div>
+      <div class="idea-box">
+        <h3>Idea 2</h3>
+        <p>...</p>
+      </div>
+      <div class="idea-box">
+        <h3>Idea 3</h3>
+        <p>...</p>
+      </div>
+    </div>
+  </section>
+  
 </body>
 </html>
