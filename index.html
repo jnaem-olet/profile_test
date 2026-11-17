@@ -113,6 +113,36 @@
       body { padding: 36px 16px 56px; }
       .grid { grid-template-columns: 1fr; gap: 24px; max-width: 360px; }
     }
+        .ideas { max-width: 960px; margin: 80px auto 0; }
+    .section-title {
+      font-family: "Lilita One", cursive; font-weight: 400;
+      font-size: clamp(1.6rem, 4vw, 2.2rem); letter-spacing: 0.04em;
+      text-align: center; margin: 0 0 8px;
+    }
+    .section-sub { text-align: center; color: var(--muted); font-size: 0.95rem; margin: 0 0 36px; }
+    .idea-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .idea {
+      background: var(--paper); border-top: 8px solid var(--card);
+      padding: 18px 18px 20px; display: flex; flex-direction: column;
+      transition: transform 0.2s ease;
+    }
+    .idea:hover { transform: translateY(-4px) rotate(0.4deg); }
+    .idea.pink { --card: var(--pink); }
+    .idea.yellow { --card: var(--yellow); }
+    .idea.mint { --card: var(--mint); }
+    .idea.lavender { --card: var(--lavender); }
+    .idea h3 {
+      font-family: "Lilita One", cursive; font-weight: 400;
+      font-size: 1.05rem; letter-spacing: 0.04em; margin: 0 0 8px;
+    }
+    .idea p { margin: 0 0 14px; font-size: 0.9rem; line-height: 1.5; flex: 1; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tags span {
+      background: var(--card); font-size: 0.7rem; font-weight: 700;
+      padding: 3px 9px; border-radius: 999px;
+    }
+    @media (max-width: 860px) { .idea-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .idea-grid { grid-template-columns: 1fr; max-width: 360px; margin: 0 auto; } }
   </style>
 </head>
 <body>
@@ -160,5 +190,84 @@
 
   </main>
 
+    <section class="ideas">
+    <h2 class="section-title">Project Ideas</h2>
+    <p class="section-sub">Our group's ideas and the tech we would like to use</p>
+    <div class="idea-grid">
+
+      <article class="idea pink">
+        <h3>Interactive Team Website</h3>
+        <p>Add features to this site: filter team members by skill, a dark mode toggle and a contact form.</p>
+        <div class="tags"><span>GitHub Pages</span><span>JavaScript</span><span>VS Code</span></div>
+      </article>
+
+      <article class="idea yellow">
+        <h3>Library Management System</h3>
+        <p>A web front end for a library database to manage books, borrowing history and user accounts.</p>
+        <div class="tags"><span>MySQL</span><span>Node.js</span><span>React</span></div>
+      </article>
+
+      <article class="idea mint">
+        <h3>Tour Booking System</h3>
+        <p>A booking site for a small travel agency where customers can view tours and reserve a spot.</p>
+        <div class="tags"><span>MySQL</span><span>React</span><span>Node.js</span></div>
+      </article>
+
+      <article class="idea lavender">
+        <h3>Citizen Feedback Portal</h3>
+        <p>A portal where residents report local issues (potholes, lights) to the council and track progress.</p>
+        <div class="tags"><span>React</span><span>Node.js</span><span>Database</span></div>
+      </article>
+
+      <article class="idea pink">
+        <h3>Construction Project Tracker</h3>
+        <p>Track tasks, budgets and deadlines for a building project, with simple progress reports.</p>
+        <div class="tags"><span>Python</span><span>MySQL</span><span>VS Code</span></div>
+      </article>
+
+      <article class="idea yellow">
+        <h3>Lab Inventory System</h3>
+        <p>A system for a university lab to record materials and equipment, with low-stock alerts.</p>
+        <div class="tags"><span>Python (Flask)</span><span>MySQL</span></div>
+      </article>
+
+      <article class="idea mint">
+        <h3>Phishing Awareness Quiz</h3>
+        <p>A web quiz showing real and fake emails so small business staff learn to spot phishing.</p>
+        <div class="tags"><span>JavaScript</span><span>GitHub Pages</span></div>
+      </article>
+
+      <article class="idea lavender">
+        <h3>Student Study Planner</h3>
+        <p>A to-do and timetable app for assignment deadlines, saved in the browser.</p>
+        <div class="tags"><span>React</span><span>localStorage</span><span>GitHub</span></div>
+      </article>
+
+      <article class="idea pink">
+        <h3>Course Feedback Dashboard</h3>
+        <p>Collect student survey answers in a database, analyse them with Python and show the results as charts.</p>
+        <div class="tags"><span>Python</span><span>MySQL</span><span>Chart.js</span></div>
+      </article>
+
+      <article class="idea yellow">
+        <h3>Club Event Booking</h3>
+        <p>Students can browse campus club events and book a place. Bookings are stored in a database.</p>
+        <div class="tags"><span>Node.js</span><span>MySQL</span><span>HTML/JS</span></div>
+      </article>
+
+      <article class="idea mint">
+        <h3>Password Strength Checker</h3>
+        <p>A tool that checks password strength as you type and gives simple security tips.</p>
+        <div class="tags"><span>JavaScript</span><span>GitHub Pages</span></div>
+      </article>
+
+      <article class="idea lavender">
+        <h3>Team Collaboration with GitHub</h3>
+        <p>Research how student teams use GitHub (branches, pull requests, issues) and write a best-practice guide.</p>
+        <div class="tags"><span>GitHub</span><span>VS Code</span><span>Research</span></div>
+      </article>
+
+    </div>
+  </section>
 </body>
 </html>
