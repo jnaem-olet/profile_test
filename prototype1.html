@@ -1,1 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lingo Buddy Hub - Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --deep: #0f3d3e;
+      --deep-2: #165a5b;
+      --cream: #f6f1e7;
+      --paper: #ffffff;
+      --coral: #ff7a59;
+      --sky: #d6ecf0;
+      --sand: #f3dfb8;
+      --ink: #1c2321;
+      --muted: #66706d;
+      --line: #e2ddd2;
+      --danger: #c2413b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "DM Sans", system-ui, sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.55;
+    }
+    h1, h2, h3 { font-family: "Space Grotesk", sans-serif; margin: 0; }
 
+    /* Header */
+    .top { background: var(--deep); color: #fff; padding: 34px 20px 70px; }
+    .top-inner { max-width: 880px; margin: 0 auto; }
+    .logo { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.85; }
+    .logo span { background: var(--coral); color: var(--deep); font-weight: 700; padding: 3px 9px; border-radius: 6px; letter-spacing: 0; }
+    .top h1 { font-size: clamp(2rem, 5vw, 2.8rem); margin: 14px 0 8px; line-height: 1.1; }
+    .top p { margin: 0; max-width: 560px; opacity: 0.85; }
+
+    .wrap { max-width: 880px; margin: -44px auto 0; padding: 0 20px 60px; }
+    .card { background: var(--paper); border-radius: 18px; padding: 26px; margin-bottom: 26px; box-shadow: 0 6px 24px rgba(15, 61, 62, 0.08); }
+    .card h2 { font-size: 1.35rem; margin-bottom: 4px; }
+    .sub { color: var(--muted); margin: 0 0 20px; font-size: 0.93rem; }
+    .num { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--coral); color: var(--deep); font-size: 0.9rem; margin-right: 8px; }
+
+    /* Form */
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid .wide { grid-column: 1 / -1; }
+    label.lbl { display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 5px; }
+    input[type="text"], input[type="email"], select {
+      width: 100%; font: inherit; font-size: 0.95rem;
+      padding: 11px 13px; border: 1.5px solid var(--line); border-radius: 10px; background: #fff;
+    }
+    input:focus, select:focus { outline: none; border-color: var(--deep-2); }
+
+    h3.step { font-size: 1.05rem; margin: 26px 0 6px; }
+    .share-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    .share-item {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 14px; font-size: 0.92rem; cursor: pointer;
+    }
+    .share-item small { display: block; color: var(--muted); font-size: 0.76rem; }
+    .switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; inset: 0; background: var(--line); border-radius: 999px; transition: 0.2s; }
+    .slider::before { content: ""; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: 0.2s; }
+    .switch input:checked + .slider { background: var(--deep-2); }
+    .switch input:checked + .slider::before { transform: translateX(20px); }
+    .switch input:focus-visible + .slider { outline: 2px solid var(--coral); outline-offset: 2px; }
+
+    .agree { display: flex; gap: 10px; align-items: flex-start; margin: 20px 0 4px; font-size: 0.88rem; }
+    .agree input { margin-top: 5px; }
+    .error { color: var(--danger); font-size: 0.88rem; min-height: 1.3em; margin: 8px 0; }
+
+    .btn {
+      font: inherit; font-weight: 700; font-size: 0.95rem; border: none; cursor: pointer;
+      padding: 12px 20px; border-radius: 999px; background: var(--deep); color: #fff;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); background: var(--deep-2); }
+    .btn.coral { background: var(--coral); color: var(--deep); }
+    .btn.ghost { background: transparent; color: var(--deep); border: 1.5px solid var(--deep); }
+    .btn.danger { background: transparent; color: var(--danger); border: 1.5px solid var(--danger); }
+    .btn.small { padding: 8px 14px; font-size: 0.85rem; }
+    .btn:disabled { opacity: 0.6; cursor: default; transform: none; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
+
+    /* My profile */
+    .me-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+    .meter { margin: 18px 0; }
+    .meter-top { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; }
+    .meter-track { height: 10px; background: var(--cream); border-radius: 999px; overflow: hidden; }
+    .meter-fill { height: 100%; background: var(--coral); border-radius: 999px; transition: width 0.3s; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .chip { font-size: 0.8rem; padding: 4px 11px; border-radius: 999px; background: var(--sky); }
+    .chip.off { background: var(--cream); color: var(--muted); }
+
+    /* Find buddies */
+    .toolbar { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .check { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; margin-bottom: 8px; }
+    .count { color: var(--muted); font-size: 0.85rem; margin: 0 0 14px; }
+    .list { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .student { border: 1.5px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+    .student.mine { border-color: var(--coral); background: #fff7f3; }
+    .s-head { display: flex; align-items: center; gap: 12px; }
+    .avatar { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; font-family: "Space Grotesk"; font-weight: 700; background: var(--sand); color: var(--deep); flex-shrink: 0; }
+    .s-name { font-weight: 700; }
+    .tag { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; margin-top: 2px; }
+    .tag.perfect { background: var(--coral); color: var(--deep); }
+    .tag.half { background: var(--sky); color: var(--deep); }
+    .rows { font-size: 0.88rem; display: grid; gap: 3px; }
+    .rows div { display: flex; justify-content: space-between; gap: 10px; }
+    .rows .k { color: var(--muted); }
+    .rows .lock { color: var(--muted); font-style: italic; }
+    .s-actions { display: flex; gap: 8px; align-items: center; margin-top: auto; flex-wrap: wrap; }
+    .link { background: none; border: none; font: inherit; font-size: 0.8rem; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 0; }
+    .sent { font-size: 0.82rem; color: var(--deep-2); font-weight: 700; }
+    .locked { border: 2px dashed var(--line); border-radius: 14px; padding: 22px; text-align: center; color: var(--muted); }
+
+    /* Security */
+    .tips { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .tip { background: var(--cream); border-radius: 12px; padding: 14px 16px; font-size: 0.9rem; }
+    .tip b { display: block; margin-bottom: 2px; }
+
+    footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding-bottom: 30px; }
+    .hidden { display: none !important; }
+
+    @media (max-width: 640px) {
+      .grid, .share-list, .list, .tips, .toolbar { grid-template-columns: 1fr; }
+      .card { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top">
+    <div class="top-inner">
+      <div class="logo"><span>Hola · 你好 · Hi</span> Lingo Buddy Hub</div>
+      <h1>Find a language buddy on campus</h1>
+      <p>Swap languages with other students: you teach yours, they teach theirs. You decide what other students can see about you.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- 1 + 2: Sign up and privacy -->
+    <section class="card" id="signup">
+      <h2><span class="num">1</span>Create your profile</h2>
+      <p class="sub">Use your Monash student email. It is only used to check you are a student and is never shown to anyone.</p>
+
+      <div class="grid">
+        <div>
+          <label class="lbl" for="name">First name</label>
+          <input type="text" id="name" placeholder="Alex" maxlength="30">
+        </div>
+        <div>
+          <label class="lbl" for="email">Student email</label>
+          <input type="email" id="email" placeholder="abcd0001@student.monash.edu">
+        </div>
+        <div>
+          <label class="lbl" for="country">Country</label>
+          <select id="country"></select>
+        </div>
+        <div>
+          <label class="lbl" for="campus">Campus</label>
+          <select id="campus"></select>
+        </div>
+        <div>
+          <label class="lbl" for="speaks">Language I speak</label>
+          <select id="speaks"></select>
+        </div>
+        <div>
+          <label class="lbl" for="learning">Language I'm learning</label>
+          <select id="learning"></select>
+        </div>
+        <div class="wide">
+          <label class="lbl" for="interests">Interests</label>
+          <input type="text" id="interests" placeholder="e.g. football, cooking, K-dramas" maxlength="60">
+        </div>
+      </div>
+
+      <h3 class="step"><span class="num">2</span>Choose what others can see</h3>
+      <p class="sub">Fair-share rule: you can only see the information about other students that you also share about yourself.</p>
+      <div class="share-list" id="shareList"></div>
+
+      <label class="agree">
+        <input type="checkbox" id="agree">
+        <span>I agree that the items I turn on are shown to other logged-in students. I can change this or delete my data at any time.</span>
+      </label>
+      <p class="error" id="formErr" role="alert"></p>
+      <div class="btn-row">
+        <button class="btn coral" id="saveBtn">Join the hub</button>
+        <button class="btn ghost hidden" id="cancelBtn">Cancel</button>
+      </div>
+    </section>
+
+    <!-- My profile -->
+    <section class="card hidden" id="me">
+      <div class="me-head">
+        <div>
+          <h2 id="meTitle">Hi!</h2>
+          <p class="sub" id="meText"></p>
+        </div>
+      </div>
+      <div class="meter">
+        <div class="meter-top"><span>How much you share</span><span id="meterLabel"></span></div>
+        <div class="meter-track"><div class="meter-fill" id="meterFill"></div></div>
+      </div>
+      <div class="chips" id="meChips"></div>
+      <div class="btn-row">
+        <button class="btn ghost small" id="editBtn">Edit profile and privacy</button>
+        <button class="btn ghost small" id="downloadBtn">Download my data</button>
+        <button class="btn danger small" id="deleteBtn">Delete my data</button>
+      </div>
+    </section>
+
+    <!-- Find buddies -->
+    <section class="card">
+      <h2><span class="num">3</span>Find a buddy</h2>
+      <p class="sub">A <b>perfect match</b> speaks the language you're learning and is learning the language you speak.</p>
+
+      <div id="finder" class="hidden">
+        <div class="toolbar">
+          <input type="text" id="search" placeholder="Search by name, country, language or interest...">
+          <select id="langFilter"></select>
+        </div>
+        <label class="check"><input type="checkbox" id="perfectOnly"> Only show perfect matches</label>
+        <p class="count" id="count"></p>
+        <div class="list" id="list"></div>
+      </div>
+      <div class="locked" id="finderLocked">&#128274; Create your profile above to see other students.</div>
+    </section>
+
+    <!-- Security -->
+    <section class="card">
+      <h2>&#128274; Staying safe</h2>
+      <p class="sub">How this hub protects you, and what you can do too.</p>
+      <div class="tips">
+        <div class="tip"><b>Your email stays hidden</b>"Say hi" sends a request without showing your email to the other student.</div>
+        <div class="tip"><b>You choose every item</b>Each piece of information has its own switch. Hidden items are never stored.</div>
+        <div class="tip"><b>Meet in public places</b>Do your first language swap in the library, a café or another busy spot on campus.</div>
+        <div class="tip"><b>Never share passwords</b>Do not share your
