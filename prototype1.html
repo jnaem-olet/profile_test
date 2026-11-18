@@ -9,29 +9,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --deep: #0f3d3e;
-      --deep-2: #165a5b;
-      --cream: #f6f1e7;
-      --paper: #ffffff;
-      --coral: #ff7a59;
-      --sky: #d6ecf0;
-      --sand: #f3dfb8;
-      --ink: #1c2321;
-      --muted: #66706d;
-      --line: #e2ddd2;
-      --danger: #c2413b;
+      --deep: #0f3d3e; --deep-2: #165a5b; --cream: #f6f1e7; --paper: #ffffff;
+      --coral: #ff7a59; --sky: #d6ecf0; --sand: #f3dfb8; --ink: #1c2321;
+      --muted: #66706d; --line: #e2ddd2; --danger: #c2413b;
     }
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: "DM Sans", system-ui, sans-serif;
-      background: var(--cream);
-      color: var(--ink);
-      line-height: 1.55;
-    }
+    body { margin: 0; font-family: "DM Sans", system-ui, sans-serif; background: var(--cream); color: var(--ink); line-height: 1.55; }
     h1, h2, h3 { font-family: "Space Grotesk", sans-serif; margin: 0; }
 
-    /* Header */
     .top { background: var(--deep); color: #fff; padding: 34px 20px 70px; }
     .top-inner { max-width: 880px; margin: 0 auto; }
     .logo { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.85; }
@@ -45,22 +30,15 @@
     .sub { color: var(--muted); margin: 0 0 20px; font-size: 0.93rem; }
     .num { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--coral); color: var(--deep); font-size: 0.9rem; margin-right: 8px; }
 
-    /* Form */
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .grid .wide { grid-column: 1 / -1; }
     label.lbl { display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 5px; }
-    input[type="text"], input[type="email"], select {
-      width: 100%; font: inherit; font-size: 0.95rem;
-      padding: 11px 13px; border: 1.5px solid var(--line); border-radius: 10px; background: #fff;
-    }
+    input[type="text"], input[type="email"], select { width: 100%; font: inherit; font-size: 0.95rem; padding: 11px 13px; border: 1.5px solid var(--line); border-radius: 10px; background: #fff; }
     input:focus, select:focus { outline: none; border-color: var(--deep-2); }
 
     h3.step { font-size: 1.05rem; margin: 26px 0 6px; }
     .share-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-    .share-item {
-      display: flex; justify-content: space-between; align-items: center; gap: 10px;
-      border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 14px; font-size: 0.92rem; cursor: pointer;
-    }
+    .share-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 14px; font-size: 0.92rem; cursor: pointer; }
     .share-item small { display: block; color: var(--muted); font-size: 0.76rem; }
     .switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
     .switch input { opacity: 0; width: 0; height: 0; }
@@ -68,27 +46,19 @@
     .slider::before { content: ""; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: 0.2s; }
     .switch input:checked + .slider { background: var(--deep-2); }
     .switch input:checked + .slider::before { transform: translateX(20px); }
-    .switch input:focus-visible + .slider { outline: 2px solid var(--coral); outline-offset: 2px; }
 
     .agree { display: flex; gap: 10px; align-items: flex-start; margin: 20px 0 4px; font-size: 0.88rem; }
     .agree input { margin-top: 5px; }
     .error { color: var(--danger); font-size: 0.88rem; min-height: 1.3em; margin: 8px 0; }
 
-    .btn {
-      font: inherit; font-weight: 700; font-size: 0.95rem; border: none; cursor: pointer;
-      padding: 12px 20px; border-radius: 999px; background: var(--deep); color: #fff;
-      transition: transform 0.15s ease, background 0.15s ease;
-    }
+    .btn { font: inherit; font-weight: 700; font-size: 0.95rem; border: none; cursor: pointer; padding: 12px 20px; border-radius: 999px; background: var(--deep); color: #fff; transition: transform 0.15s ease, background 0.15s ease; }
     .btn:hover { transform: translateY(-1px); background: var(--deep-2); }
     .btn.coral { background: var(--coral); color: var(--deep); }
     .btn.ghost { background: transparent; color: var(--deep); border: 1.5px solid var(--deep); }
     .btn.danger { background: transparent; color: var(--danger); border: 1.5px solid var(--danger); }
     .btn.small { padding: 8px 14px; font-size: 0.85rem; }
-    .btn:disabled { opacity: 0.6; cursor: default; transform: none; }
     .btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
 
-    /* My profile */
-    .me-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
     .meter { margin: 18px 0; }
     .meter-top { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; }
     .meter-track { height: 10px; background: var(--cream); border-radius: 999px; overflow: hidden; }
@@ -97,7 +67,6 @@
     .chip { font-size: 0.8rem; padding: 4px 11px; border-radius: 999px; background: var(--sky); }
     .chip.off { background: var(--cream); color: var(--muted); }
 
-    /* Find buddies */
     .toolbar { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-bottom: 12px; }
     .check { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; margin-bottom: 8px; }
     .count { color: var(--muted); font-size: 0.85rem; margin: 0 0 14px; }
@@ -119,7 +88,6 @@
     .sent { font-size: 0.82rem; color: var(--deep-2); font-weight: 700; }
     .locked { border: 2px dashed var(--line); border-radius: 14px; padding: 22px; text-align: center; color: var(--muted); }
 
-    /* Security */
     .tips { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .tip { background: var(--cream); border-radius: 12px; padding: 14px 16px; font-size: 0.9rem; }
     .tip b { display: block; margin-bottom: 2px; }
@@ -145,40 +113,17 @@
 
   <main class="wrap">
 
-    <!-- 1 + 2: Sign up and privacy -->
     <section class="card" id="signup">
       <h2><span class="num">1</span>Create your profile</h2>
       <p class="sub">Use your Monash student email. It is only used to check you are a student and is never shown to anyone.</p>
-
       <div class="grid">
-        <div>
-          <label class="lbl" for="name">First name</label>
-          <input type="text" id="name" placeholder="Alex" maxlength="30">
-        </div>
-        <div>
-          <label class="lbl" for="email">Student email</label>
-          <input type="email" id="email" placeholder="abcd0001@student.monash.edu">
-        </div>
-        <div>
-          <label class="lbl" for="country">Country</label>
-          <select id="country"></select>
-        </div>
-        <div>
-          <label class="lbl" for="campus">Campus</label>
-          <select id="campus"></select>
-        </div>
-        <div>
-          <label class="lbl" for="speaks">Language I speak</label>
-          <select id="speaks"></select>
-        </div>
-        <div>
-          <label class="lbl" for="learning">Language I'm learning</label>
-          <select id="learning"></select>
-        </div>
-        <div class="wide">
-          <label class="lbl" for="interests">Interests</label>
-          <input type="text" id="interests" placeholder="e.g. football, cooking, K-dramas" maxlength="60">
-        </div>
+        <div><label class="lbl" for="name">First name</label><input type="text" id="name" placeholder="Alex" maxlength="30"></div>
+        <div><label class="lbl" for="email">Student email</label><input type="email" id="email" placeholder="abcd0001@student.monash.edu"></div>
+        <div><label class="lbl" for="country">Country</label><select id="country"></select></div>
+        <div><label class="lbl" for="campus">Campus</label><select id="campus"></select></div>
+        <div><label class="lbl" for="speaks">Language I speak</label><select id="speaks"></select></div>
+        <div><label class="lbl" for="learning">Language I'm learning</label><select id="learning"></select></div>
+        <div class="wide"><label class="lbl" for="interests">Interests</label><input type="text" id="interests" placeholder="e.g. football, cooking, K-dramas" maxlength="60"></div>
       </div>
 
       <h3 class="step"><span class="num">2</span>Choose what others can see</h3>
@@ -196,14 +141,9 @@
       </div>
     </section>
 
-    <!-- My profile -->
     <section class="card hidden" id="me">
-      <div class="me-head">
-        <div>
-          <h2 id="meTitle">Hi!</h2>
-          <p class="sub" id="meText"></p>
-        </div>
-      </div>
+      <h2 id="meTitle">Hi!</h2>
+      <p class="sub" id="meText"></p>
       <div class="meter">
         <div class="meter-top"><span>How much you share</span><span id="meterLabel"></span></div>
         <div class="meter-track"><div class="meter-fill" id="meterFill"></div></div>
@@ -216,11 +156,9 @@
       </div>
     </section>
 
-    <!-- Find buddies -->
     <section class="card">
       <h2><span class="num">3</span>Find a buddy</h2>
       <p class="sub">A <b>perfect match</b> speaks the language you're learning and is learning the language you speak.</p>
-
       <div id="finder" class="hidden">
         <div class="toolbar">
           <input type="text" id="search" placeholder="Search by name, country, language or interest...">
@@ -233,7 +171,6 @@
       <div class="locked" id="finderLocked">&#128274; Create your profile above to see other students.</div>
     </section>
 
-    <!-- Security -->
     <section class="card">
       <h2>&#128274; Staying safe</h2>
       <p class="sub">How this hub protects you, and what you can do too.</p>
@@ -241,4 +178,308 @@
         <div class="tip"><b>Your email stays hidden</b>"Say hi" sends a request without showing your email to the other student.</div>
         <div class="tip"><b>You choose every item</b>Each piece of information has its own switch. Hidden items are never stored.</div>
         <div class="tip"><b>Meet in public places</b>Do your first language swap in the library, a café or another busy spot on campus.</div>
-        <div class="tip"><b>Never share passwords</b>Do not share your
+        <div class="tip"><b>Never share passwords</b>Do not share your password, address, bank details or student ID number with anyone.</div>
+        <div class="tip"><b>Report or hide</b>If someone makes you uncomfortable, use "Report / hide" on their card.</div>
+        <div class="tip"><b>Your data, your call</b>You can download a copy of your data or delete it completely at any time.</div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>Prototype only: data is saved in this browser, and there is no real Monash login.</footer>
+    <script>
+    var FIELDS = [
+      { key: "name",      label: "First name", hint: "Otherwise you show as an ID", def: true },
+      { key: "country",   label: "Country",    hint: "Where you are from", def: true },
+      { key: "speaks",    label: "Speaks",     hint: "The language you can teach", def: true },
+      { key: "learning",  label: "Learning",   hint: "The language you want to practise", def: true },
+      { key: "campus",    label: "Campus",     hint: "Where you study", def: false },
+      { key: "interests", label: "Interests",  hint: "Things to talk about", def: true }
+    ];
+    var LANGS = ["English", "Spanish", "Mandarin", "Cantonese", "Hindi", "Vietnamese", "Korean", "Japanese", "Indonesian", "French", "Arabic", "Portuguese", "Other"];
+    var CAMPUSES = ["Clayton", "Caulfield", "Peninsula", "Parkville"];
+    var COUNTRIES = ["Australia", "Brazil", "China", "Colombia", "France", "Hong Kong", "India", "Indonesia", "Japan", "Korea", "Malaysia", "Mexico", "Saudi Arabia", "Vietnam", "Other"];
+
+    var SEED = [
+      { id: "B-201", name: "Liam",    country: "Australia", speaks: "English",    learning: "Spanish",  campus: "Clayton",   interests: "Surfing, salsa",        share: { name: 1, country: 1, speaks: 1, learning: 1, campus: 1, interests: 1 } },
+      { id: "B-214", name: "Mei",     country: "China",     speaks: "Mandarin",   learning: "English",  campus: "Clayton",   interests: "Bubble tea, badminton", share: { name: 1, country: 1, speaks: 1, learning: 1, campus: 0, interests: 1 } },
+      { id: "B-227", name: "Sofia",   country: "Colombia",  speaks: "Spanish",    learning: "English",  campus: "Caulfield", interests: "Coffee, photography",   share: { name: 1, country: 1, speaks: 1, learning: 1, campus: 1, interests: 1 } },
+      { id: "B-233", name: "Arjun",   country: "India",     speaks: "Hindi",      learning: "Japanese", campus: "Clayton",   interests: "Cricket, anime",        share: { name: 0, country: 1, speaks: 1, learning: 1, campus: 1, interests: 1 } },
+      { id: "B-245", name: "Hana",    country: "Korea",     speaks: "Korean",     learning: "English",  campus: "Parkville", interests: "K-pop dance, baking",   share: { name: 1, country: 0, speaks: 1, learning: 1, campus: 1, interests: 1 } },
+      { id: "B-252", name: "Chloe",   country: "Australia", speaks: "English",    learning: "Korean",   campus: "Parkville", interests: "K-dramas, hiking",      share: { name: 1, country: 1, speaks: 1, learning: 1, campus: 1, interests: 0 } },
+      { id: "B-268", name: "Linh",    country: "Vietnam",   speaks: "Vietnamese", learning: "English",  campus: "Caulfield", interests: "Cooking, design",       share: { name: 1, country: 1, speaks: 1, learning: 1, campus: 0, interests: 1 } },
+      { id: "B-271", name: "Lucas",   country: "Brazil",    speaks: "Portuguese", learning: "Spanish",  campus: "Clayton",   interests: "Football, music",       share: { name: 1, country: 1, speaks: 1, learning: 1, campus: 1, interests: 1 } },
+      { id: "B-286", name: "Jack",    country: "Australia", speaks: "English",    learning: "Mandarin", campus: "Clayton",   interests: "Gaming, basketball",    share: { name: 1, country: 1, speaks: 1, learning: 1, campus: 1, interests: 1 } },
+      { id: "B-293", name: "Budi",    country: "Indonesia", speaks: "Indonesian", learning: "English",  campus: "Peninsula", interests: "Badminton, films",      share: { name: 0, country: 1, speaks: 1, learning: 1, campus: 1, interests: 0 } },
+      { id: "B-305", name: "Valeria", country: "Mexico",    speaks: "Spanish",    learning: "French",   campus: "Caulfield", interests: "Dancing, travel",       share: { name: 1, country: 1, speaks: 1, learning: 1, campus: 1, interests: 1 } },
+      { id: "B-318", name: "Yuki",    country: "Japan",     speaks: "Japanese",   learning: "English",  campus: "Clayton",   interests: "Manga, running",        share: { name: 1, country: 1, speaks: 1, learning: 1, campus: 0, interests: 1 } }
+    ];
+
+    var state = { me: null, requests: {}, hidden: {} };
+    var editing = false;
+    var deleteArmed = false;
+
+    function load(key) {
+      try { var v = localStorage.getItem("lbh_" + key); return v ? JSON.parse(v) : null; }
+      catch (e) { return null; }
+    }
+    function save(key, value) {
+      try {
+        if (value === null) localStorage.removeItem("lbh_" + key);
+        else localStorage.setItem("lbh_" + key, JSON.stringify(value));
+      } catch (e) {}
+    }
+    function $(id) { return document.getElementById(id); }
+    function el(tag, cls, text) {
+      var e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text !== undefined) e.textContent = text;
+      return e;
+    }
+    function fillSelect(id, options, first) {
+      var s = $(id);
+      s.innerHTML = "";
+      if (first) { var o = el("option", "", first); o.value = ""; s.appendChild(o); }
+      options.forEach(function (opt) { s.appendChild(el("option", "", opt)); });
+    }
+
+    fillSelect("country", COUNTRIES, "Choose...");
+    fillSelect("campus", CAMPUSES, "Choose...");
+    fillSelect("speaks", LANGS, "Choose...");
+    fillSelect("learning", LANGS, "Choose...");
+    fillSelect("langFilter", LANGS, "Any language they speak");
+
+    function buildShareList(share) {
+      var box = $("shareList");
+      box.innerHTML = "";
+      FIELDS.forEach(function (f) {
+        var item = el("label", "share-item");
+        var txt = el("div", "", f.label);
+        txt.appendChild(el("small", "", f.hint));
+        var sw = el("span", "switch");
+        var input = document.createElement("input");
+        input.type = "checkbox";
+        input.dataset.key = f.key;
+        input.checked = share ? !!share[f.key] : f.def;
+        sw.appendChild(input);
+        sw.appendChild(el("span", "slider"));
+        item.appendChild(txt);
+        item.appendChild(sw);
+        box.appendChild(item);
+      });
+    }
+
+    function fillForm() {
+      var m = state.me || {};
+      ["name", "email", "country", "campus", "speaks", "learning", "interests"].forEach(function (k) {
+        $(k).value = m[k] || "";
+      });
+      buildShareList(m.share);
+      $("agree").checked = !!state.me;
+      $("formErr").textContent = "";
+    }
+
+    $("saveBtn").addEventListener("click", function () {
+      var d = {};
+      ["name", "email", "country", "campus", "speaks", "learning", "interests"].forEach(function (k) {
+        d[k] = $(k).value.trim();
+      });
+      d.email = d.email.toLowerCase();
+      var share = {};
+      document.querySelectorAll("#shareList input").forEach(function (i) {
+        share[i.dataset.key] = i.checked ? 1 : 0;
+      });
+
+      var err = "";
+      if (!d.name) err = "Enter your first name.";
+      else if (!/^[a-zA-ZÀ-ÿ' -]+$/.test(d.name)) err = "Your first name can only use letters.";
+      else if (!/^[^@\s]+@student\.monash\.edu$/.test(d.email)) err = "Use your Monash student email (ending in @student.monash.edu).";
+      else if (!d.speaks || !d.learning) err = "Choose the language you speak and the one you're learning.";
+      else if ((share.country && !d.country) || (share.campus && !d.campus)) err = "Choose your country and campus (or turn them off below).";
+      else if (d.speaks === d.learning) err = "The language you're learning should be different from the one you speak.";
+      else if (share.interests && !d.interests) err = "Add at least one interest (or turn Interests off below).";
+      else if (!share.speaks || !share.learning) err = "Share at least the language you speak and the one you're learning, so buddies can find you.";
+      else if (!$("agree").checked) err = "Tick the box to agree before you continue.";
+      else if (/\d{6,}|@|https?:/i.test(d.interests)) err = "Don't put phone numbers, emails or links in your interests.";
+      $("formErr").textContent = err;
+      if (err) return;
+
+      var me = { email: d.email, share: share };
+      FIELDS.forEach(function (f) { if (share[f.key]) me[f.key] = d[f.key]; });
+      me.speaks = d.speaks; me.learning = d.learning;
+      if (!share.name) me.nameLocal = d.name;
+
+      state.me = me;
+      save("me", me);
+      editing = false;
+      render();
+      $("me").scrollIntoView({ behavior: "smooth" });
+    });
+    ["name", "email", "interests"].forEach(function (id) {
+      $(id).addEventListener("input", function () { $("formErr").textContent = ""; });
+    });
+
+    $("cancelBtn").addEventListener("click", function () { editing = false; render(); });
+    $("editBtn").addEventListener("click", function () {
+      editing = true; fillForm();
+      if (state.me.nameLocal) $("name").value = state.me.nameLocal;
+      render();
+      $("signup").scrollIntoView({ behavior: "smooth" });
+    });
+
+    $("deleteBtn").addEventListener("click", function () {
+      var b = this;
+      if (!deleteArmed) {
+        deleteArmed = true;
+        b.textContent = "Click again to delete everything";
+        setTimeout(function () { deleteArmed = false; b.textContent = "Delete my data"; }, 4000);
+        return;
+      }
+      deleteArmed = false;
+      b.textContent = "Delete my data";
+      state = { me: null, requests: {}, hidden: {} };
+      save("me", null); save("requests", null); save("hidden", null);
+      fillForm();
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    $("downloadBtn").addEventListener("click", function () {
+      var data = { profile: state.me, buddyRequestsSent: Object.keys(state.requests), hiddenStudents: Object.keys(state.hidden) };
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
+      a.download = "my-lingo-buddy-data.json";
+      document.body.appendChild(a); a.click(); a.remove();
+    });
+
+    $("search").addEventListener("input", renderList);
+    $("langFilter").addEventListener("change", renderList);
+    $("perfectOnly").addEventListener("change", renderList);
+
+    function canSee(student, key) {
+      return !!(student.share[key] && state.me.share[key]);
+    }
+    function matchType(s) {
+      var me = state.me;
+      var speaksOk = canSee(s, "speaks") && s.speaks === me.learning;
+      var learnsOk = canSee(s, "learning") && s.learning === me.speaks;
+      if (speaksOk && learnsOk) return "perfect";
+      if (speaksOk) return "half";
+      return "";
+    }
+
+    function render() {
+      var me = state.me;
+      $("signup").classList.toggle("hidden", !!me && !editing);
+      $("cancelBtn").classList.toggle("hidden", !me);
+      $("saveBtn").textContent = me ? "Save changes" : "Join the hub";
+      $("me").classList.toggle("hidden", !me || editing);
+      $("finder").classList.toggle("hidden", !me);
+      $("finderLocked").classList.toggle("hidden", !!me);
+      if (!me) return;
+
+      var displayName = me.name || me.nameLocal;
+      $("meTitle").textContent = "Hi, " + displayName + "!";
+      $("meText").textContent = "You speak " + me.speaks + " and you're learning " + me.learning + ". " +
+        (me.share.name ? "Other students see your first name." : "Other students see you as an ID, not your name.");
+
+      var shared = FIELDS.filter(function (f) { return me.share[f.key]; }).length;
+      $("meterFill").style.width = Math.round(shared / FIELDS.length * 100) + "%";
+      $("meterLabel").textContent = shared + " of " + FIELDS.length + " · " +
+        (shared <= 3 ? "Very private" : shared <= 5 ? "Balanced" : "Open");
+
+      var chips = $("meChips");
+      chips.innerHTML = "";
+      FIELDS.forEach(function (f) {
+        chips.appendChild(el("span", "chip" + (me.share[f.key] ? "" : " off"),
+          (me.share[f.key] ? "\u2713 " : "\uD83D\uDD12 ") + f.label));
+      });
+      renderList();
+    }
+
+    function renderList() {
+      if (!state.me) return;
+      var q = $("search").value.trim().toLowerCase();
+      var lang = $("langFilter").value;
+      var perfectOnly = $("perfectOnly").checked;
+
+      var people = SEED.filter(function (s) {
+        if (state.hidden[s.id]) return false;
+        if (lang && !(canSee(s, "speaks") && s.speaks === lang)) return false;
+        if (perfectOnly && matchType(s) !== "perfect") return false;
+        if (q) {
+          var text = FIELDS.filter(function (f) { return canSee(s, f.key); })
+            .map(function (f) { return s[f.key]; }).join(" ").toLowerCase();
+          if (text.indexOf(q) === -1) return false;
+        }
+        return true;
+      });
+      var rank = { perfect: 0, half: 1, "": 2 };
+      people.sort(function (a, b) { return rank[matchType(a)] - rank[matchType(b)]; });
+
+      var list = $("list");
+      list.innerHTML = "";
+      list.appendChild(card(Object.assign({ id: "You" }, state.me), true));
+      people.forEach(function (s) { list.appendChild(card(s, false)); });
+
+      var hiddenCount = Object.keys(state.hidden).length;
+      $("count").textContent = people.length + " student" + (people.length === 1 ? "" : "s") + " found" +
+        (hiddenCount ? " · " + hiddenCount + " hidden by you" : "") + ".";
+      if (!people.length) list.appendChild(el("div", "locked", "No students match your search. Try another language or clear the filters."));
+    }
+
+    function card(s, isMe) {
+      var c = el("article", "student" + (isMe ? " mine" : ""));
+      var head = el("div", "s-head");
+      var showName = isMe ? s.share.name : canSee(s, "name");
+      var label = isMe ? "You (as others see you)" : (showName ? s.name : "Student " + s.id);
+      head.appendChild(el("div", "avatar", showName && s.name ? s.name.charAt(0).toUpperCase() : "?"));
+
+      var info = el("div");
+      info.appendChild(el("div", "s-name", label));
+      if (!isMe) {
+        var m = matchType(s);
+        if (m === "perfect") info.appendChild(el("span", "tag perfect", "\u2605 Perfect match"));
+        else if (m === "half") info.appendChild(el("span", "tag half", "Speaks " + state.me.learning));
+      }
+      head.appendChild(info);
+      c.appendChild(head);
+
+      var rows = el("div", "rows");
+      FIELDS.forEach(function (f) {
+        if (f.key === "name") return;
+        var r = el("div");
+        r.appendChild(el("span", "k", f.label));
+        var visible = isMe ? s.share[f.key] : canSee(s, f.key);
+        if (visible) r.appendChild(el("span", "", s[f.key]));
+        else if (!isMe && s.share[f.key] && !state.me.share[f.key]) r.appendChild(el("span", "lock", "\uD83D\uDD12 Share yours to see"));
+        else r.appendChild(el("span", "lock", "\uD83D\uDD12 Private"));
+        rows.appendChild(r);
+      });
+      c.appendChild(rows);
+
+      if (!isMe) {
+        var act = el("div", "s-actions");
+        if (state.requests[s.id]) {
+          act.appendChild(el("span", "sent", "\u2713 Request sent (your email stays hidden)"));
+        } else {
+          var hi = el("button", "btn small", "Say hi \uD83D\uDC4B");
+          hi.addEventListener("click", function () { state.requests[s.id] = true; save("requests", state.requests); renderList(); });
+          act.appendChild(hi);
+        }
+        var rep = el("button", "link", "Report / hide");
+        rep.addEventListener("click", function () { state.hidden[s.id] = true; save("hidden", state.hidden); renderList(); });
+        act.appendChild(rep);
+        c.appendChild(act);
+      }
+      return c;
+    }
+
+    state.me = load("me");
+    state.requests = load("requests") || {};
+    state.hidden = load("hidden") || {};
+    fillForm();
+    render();
+  </script>
+</body>
+</html>
