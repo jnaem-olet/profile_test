@@ -214,6 +214,21 @@
       .brand { font-size: 0.95rem; }
       .who { display: none; }
     }
+        /* ===== App size: phone width ===== */
+    body { background: #ece8e1; }
+    .screen {
+      max-width: 390px;
+      min-height: 100vh;
+      background: var(--bg);
+    }
+    .topbar, .tabbar, .overlay {
+      left: 50%;
+      right: auto;
+      width: 100%;
+      max-width: 390px;
+      transform: translateX(-50%);
+    }
+    .bar-main, .tabbar-inner { max-width: 390px; }
   </style>
 </head>
 <body>
