@@ -1,1 +1,1017 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Connect Students - Prototype</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1d1d1f;
+      --muted: #6b6b70;
+      --paper: #ffffff;
+      --bg: #fbf8f3;
+      --line: #e3e0da;
+ 
+      --pink: #fcc9cf;
+      --yellow: #fde47f;
+      --mint: #b5ece4;
+      --lavender: #dcb8f5;
+      --danger: #c0392b;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; }
+    body { background: #ece8e1; font-family: "Nunito", system-ui, sans-serif; color: var(--ink); line-height: 1.6; }
+ 
+    /* ---------- Phone frame ---------- */
+    .app {
+      position: relative; max-width: 430px; height: 100vh; height: 100dvh;
+      margin: 0 auto; background: var(--bg);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    @media (min-width: 500px) {
+      .app { height: calc(100dvh - 40px); margin: 20px auto; box-shadow: 0 10px 40px rgba(0,0,0,0.15); }
+    }
+ 
+    /* ---------- App bar (top) ---------- */
+    header.top {
+      flex-shrink: 0; height: 68px; padding: 0 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--ink); color: #fff;
+    }
+    .brand {
+      font-family: "Lilita One", cursive; font-size: 1.15rem; letter-spacing: 0.05em;
+      text-transform: uppercase; display: flex; align-items: center; gap: 10px; line-height: 1.1;
+    }
+    .brand .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--yellow); flex-shrink: 0; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; }
+    .who { opacity: 0.8; font-weight: 700; }
+    .link-btn {
+      background: none; border: 1.5px solid rgba(255,255,255,0.5);
+      color: #fff; font: inherit; font-weight: 700; font-size: 0.8rem;
+      padding: 5px 12px; cursor: pointer;
+    }
+    .link-btn:hover { border-color: #fff; }
+    @media (max-width: 380px) { .brand { font-size: 0.95rem; } .who { display: none; } }
+ 
+    /* ---------- Content + views ---------- */
+    main.content { flex: 1; overflow-y: auto; position: relative; }
+    .view { display: none; }
+    .view.show { display: flex; flex-direction: column; }
+    .view.fill { height: 100%; }
+    .pad { padding: 24px 20px 32px; }
+ 
+    /* ---------- Tab bar (bottom) ---------- */
+    nav.tabbar { flex-shrink: 0; height: 72px; display: none; background: var(--paper); border-top: 1.5px solid var(--line); }
+    nav.tabbar.show { display: flex; }
+    .tab {
+      flex: 1; border: none; background: none; font: inherit; font-size: 0.78rem; font-weight: 700;
+      color: var(--muted); display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px; cursor: pointer; position: relative;
+    }
+    .tab .ico { font-size: 1.3rem; line-height: 1; }
+    .tab.active { color: var(--ink); }
+    .tab.active .ico { transform: scale(1.1); }
+    .tab .count {
+      position: absolute; top: 8px; left: calc(50% + 8px);
+      background: var(--danger); color: #fff; font-size: 0.62rem; font-weight: 800;
+      border-radius: 999px; padding: 0 6px; display: none;
+    }
+ 
+    /* ---------- Shared UI ---------- */
+    .btn {
+      background: var(--ink); color: #fff; border: none;
+      font: inherit; font-weight: 700; font-size: 0.95rem;
+      padding: 13px 20px; cursor: pointer; transition: transform 0.15s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn.ghost { background: var(--paper); color: var(--ink); border: 1.5px solid var(--ink); }
+    .btn.danger { background: var(--paper); color: var(--danger); border: 1.5px solid var(--danger); }
+    .btn.small { padding: 7px 12px; font-size: 0.8rem; }
+    .btn.full { width: 100%; }
+ 
+    h2.section {
+      font-family: "Lilita One", cursive; font-weight: 400;
+      font-size: 1.25rem; letter-spacing: 0.04em; margin: 0 0 14px;
+    }
+    .block { margin-bottom: 36px; }
+    .panel { background: var(--paper); padding: 20px; }
+    .panel > b { display: block; margin-bottom: 4px; }
+    .muted { color: var(--muted); }
+    .hint { color: var(--muted); font-size: 0.82rem; margin: 8px 0 0; }
+    .locked { background: var(--paper); border: 2px dashed var(--line); padding: 16px 18px; color: var(--muted); font-size: 0.88rem; }
+ 
+    .hello { background: var(--yellow); padding: 24px 20px; margin-bottom: 36px; }
+    .hello h1 { font-family: "Lilita One", cursive; font-weight: 400; font-size: 1.6rem; letter-spacing: 0.04em; margin: 0 0 6px; }
+    .hello p { margin: 0 0 18px; font-size: 0.92rem; }
+    .actions { display: flex; flex-direction: column; gap: 10px; }
+ 
+    .stats { display: flex; flex-direction: column; gap: 12px; }
+    .stat {
+      background: var(--paper); padding: 14px 18px;
+      border-left: 8px solid var(--c);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .stat .label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .stat .value { font-family: "Lilita One", cursive; font-size: 1.35rem; letter-spacing: 0.03em; }
+ 
+    .badge { display: inline-block; padding: 3px 10px; font-size: 0.72rem; font-weight: 700; border-radius: 999px; white-space: nowrap; }
+    .q-excellent { background: var(--mint); }
+    .q-good { background: #d8f3c4; }
+    .q-fair { background: var(--yellow); }
+    .q-poor { background: var(--pink); }
+    .awake { background: var(--mint); }
+    .asleep { background: var(--lavender); }
+    .you { background: var(--yellow); }
+ 
+    .avatar {
+      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+      display: grid; place-items: center; font-family: "Lilita One", cursive; font-size: 1.05rem;
+      color: var(--ink); border: 1.5px solid var(--ink);
+    }
+ 
+    /* ---------- Map view ---------- */
+    .strip { flex-shrink: 0; background: var(--paper); padding: 12px 0; border-bottom: 1.5px solid var(--line); }
+    .strip-title {
+      padding: 0 20px 8px; font-size: 0.72rem; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.08em; display: flex; justify-content: space-between;
+    }
+    .chips { display: flex; gap: 8px; overflow-x: auto; padding: 0 20px 2px; scrollbar-width: none; }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip {
+      flex-shrink: 0; background: var(--bg); padding: 6px 12px;
+      font-size: 0.74rem; line-height: 1.3; cursor: pointer; border-left: 5px solid var(--mint);
+    }
+    .chip.night { border-left-color: var(--lavender); }
+    .chip b { display: block; font-family: "Lilita One", cursive; font-weight: 400; font-size: 1rem; letter-spacing: 0.03em; }
+    .chip.me { background: var(--yellow); }
+    .map-wrap { flex: 1; position: relative; min-height: 200px; }
+    #map { position: absolute; inset: 0; }
+    .map-fallback { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--muted); }
+    .pin {
+      display: flex; align-items: center; gap: 4px; background: var(--paper);
+      border: 2px solid var(--ink); padding: 2px 8px 2px 6px;
+      font-size: 0.85rem; font-weight: 800; box-shadow: 3px 3px 0 var(--ink); white-space: nowrap;
+    }
+    .pin.me { background: var(--yellow); }
+    .pin-wrap { background: none; border: none; }
+ 
+    /* ---------- Bottom sheet + pop-ups ---------- */
+    .overlay {
+      position: absolute; inset: 0; background: rgba(29, 29, 31, 0.55);
+      display: none; z-index: 2000;
+    }
+    .overlay.show { display: flex; }
+    .overlay.center { align-items: center; justify-content: center; padding: 24px 16px; overflow-y: auto; }
+    .overlay.bottom { align-items: flex-end; }
+    .sheet {
+      width: 100%; max-height: 75%; overflow-y: auto; background: var(--paper);
+      border-top: 10px solid var(--mint); padding: 18px 20px 26px; animation: up 0.25s ease;
+    }
+    @keyframes up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .modal {
+      background: var(--paper); width: min(420px, 100%);
+      padding: 28px 24px 26px; border-top: 10px solid var(--c, var(--yellow));
+      display: none; margin: auto; animation: pop 0.25s ease;
+    }
+    .modal.show { display: block; }
+    @keyframes pop { from { transform: scale(0.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .step { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+    .modal h2 { font-family: "Lilita One", cursive; font-weight: 400; font-size: 1.4rem; letter-spacing: 0.04em; margin: 0 0 8px; }
+    .intro { color: var(--muted); margin: 0 0 20px; font-size: 0.92rem; line-height: 1.5; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 6px; }
+    input[type="text"], input[type="email"], input[type="password"], input[type="number"], select {
+      font: inherit; font-size: 0.95rem; padding: 10px 12px; width: 100%;
+      border: 1.5px solid var(--line); background: var(--paper);
+    }
+    input:focus, select:focus { outline: none; border-color: var(--ink); }
+    .error { color: var(--danger); font-size: 0.85rem; margin: 6px 0 0; min-height: 1em; }
+    .note { text-align: center; color: var(--muted); font-size: 0.78rem; margin-top: 16px; }
+    .toggle-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1.5px dotted var(--line); font-size: 0.92rem; }
+    .toggle-row:last-of-type { border-bottom: none; }
+    .toggle-row small { display: block; color: var(--muted); font-size: 0.78rem; }
+    .switch { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; inset: 0; background: var(--line); cursor: pointer; border-radius: 999px; transition: 0.2s; }
+    .slider::before { content: ""; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: 0.2s; }
+    .switch input:checked + .slider { background: var(--ink); }
+    .switch input:checked + .slider::before { transform: translateX(20px); }
+    .agree { display: flex; gap: 10px; align-items: flex-start; margin: 18px 0 6px; font-size: 0.85rem; line-height: 1.5; }
+    .agree input { margin-top: 4px; }
+    .ftm-help { background: var(--bg); padding: 12px 14px; font-size: 0.82rem; margin-bottom: 18px; line-height: 1.6; }
+    .ftm-help b { display: block; margin-bottom: 4px; }
+    .ftm-help code { background: var(--paper); padding: 1px 6px; }
+    .row-btns { display: flex; gap: 10px; margin-top: 10px; }
+    .row-btns .btn { flex: 1; }
+ 
+    /* ---------- People rows ---------- */
+    .person { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1.5px dotted var(--line); }
+    .person:last-child { border-bottom: none; }
+    .person .info { flex: 1; min-width: 0; }
+    .person .name { font-weight: 700; }
+    .person .sub { font-size: 0.78rem; color: var(--muted); }
+    .city-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .city-head .flag { font-size: 2rem; }
+    .city-head h3 { margin: 0; font-family: "Lilita One", cursive; font-weight: 400; font-size: 1.4rem; letter-spacing: 0.04em; line-height: 1.2; }
+    .time-box { background: var(--bg); padding: 12px 16px; margin-bottom: 10px; border-left: 8px solid var(--yellow); }
+    .time-box .big { font-family: "Lilita One", cursive; font-size: 1.6rem; letter-spacing: 0.03em; line-height: 1.2; }
+ 
+    /* ---------- Data view ---------- */
+    .charts { display: flex; flex-direction: column; gap: 14px; }
+    .bar-row { display: grid; grid-template-columns: 110px 1fr 40px; align-items: center; gap: 10px; margin: 12px 0; font-size: 0.85rem; }
+    .bar-track { background: var(--bg); height: 12px; }
+    .bar-fill { height: 12px; background: var(--c, var(--mint)); }
+    .bar-val { text-align: right; font-weight: 700; }
+    .table-wrap { overflow-x: auto; background: var(--paper); }
+    table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+    th, td { padding: 11px 12px; text-align: left; border-bottom: 1.5px dotted var(--line); white-space: nowrap; }
+    th { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    tr.me td { background: #fff8d6; font-weight: 700; }
+ 
+    /* ---------- Chat ---------- */
+    .chat-item { display: flex; align-items: center; gap: 12px; padding: 14px 20px; background: var(--paper); border-bottom: 1.5px dotted var(--line); cursor: pointer; }
+    .chat-item .info { flex: 1; min-width: 0; }
+    .chat-item .name { font-weight: 700; display: flex; justify-content: space-between; gap: 8px; }
+    .chat-item .name small { color: var(--muted); font-weight: 600; font-size: 0.72rem; }
+    .chat-item .last { font-size: 0.84rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .unread { background: var(--danger); color: #fff; font-size: 0.68rem; font-weight: 800; border-radius: 999px; padding: 1px 7px; }
+    .section-label {
+      padding: 22px 20px 10px; font-family: "Lilita One", cursive; font-size: 1.1rem; letter-spacing: 0.04em;
+    }
+    #chatRoom { display: none; flex-direction: column; height: 100%; }
+    #chatRoom.show { display: flex; }
+    .room-head { flex-shrink: 0; display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: var(--paper); border-bottom: 1.5px solid var(--line); }
+    .back { border: none; background: none; font-size: 1.6rem; cursor: pointer; padding: 0 6px 0 0; line-height: 1; }
+    .room-head .title { font-weight: 800; }
+    .room-head .sub { font-size: 0.76rem; color: var(--muted); }
+    .messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .msg { max-width: 78%; padding: 9px 13px; background: var(--paper); font-size: 0.9rem; align-self: flex-start; border-left: 5px solid var(--mint); }
+    .msg.mine { align-self: flex-end; background: var(--ink); color: #fff; border-left: none; }
+    .msg .from { font-size: 0.72rem; font-weight: 800; color: var(--muted); }
+    .msg .time { font-size: 0.66rem; opacity: 0.6; margin-top: 2px; text-align: right; }
+    .composer { flex-shrink: 0; display: flex; gap: 8px; padding: 12px 14px; background: var(--paper); border-top: 1.5px solid var(--line); }
+    .composer .btn { padding: 10px 16px; }
+    .typing { font-size: 0.78rem; color: var(--muted); padding: 0 16px 6px; min-height: 1.2em; }
+ 
+    /* ---------- Me ---------- */
+    .share-list { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; }
+    .share-list li { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1.5px dotted var(--line); }
+    .share-list li:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+ 
+  <header class="top">
+    <div class="brand"><span class="dot"></span>Connect Students</div>
+    <div class="topbar-right">
+      <span class="who" id="who"></span>
+      <button class="link-btn" id="logoutBtn" style="display:none">Log out</button>
+    </div>
+  </header>
+ 
+  <main class="content" id="content">
+ 
+    <!-- ===== Map ===== -->
+    <section class="view fill" id="view-map">
+      <div class="strip">
+        <div class="strip-title"><span>Time around the class</span><span id="awakeCount"></span></div>
+        <div class="chips" id="chips"></div>
+      </div>
+      <div class="map-wrap">
+        <div id="map"></div>
+        <div class="map-fallback" id="mapFallback" style="display:none"></div>
+      </div>
+    </section>
+ 
+    <!-- ===== Data ===== -->
+    <section class="view" id="view-data">
+      <div class="pad" id="dataBody"></div>
+    </section>
+ 
+    <!-- ===== Chat ===== -->
+    <section class="view fill" id="view-chat">
+      <div id="chatList"></div>
+      <div id="chatRoom">
+        <div class="room-head">
+          <button class="back" id="roomBack" aria-label="Back">&#8249;</button>
+          <div class="avatar" id="roomAvatar"></div>
+          <div><div class="title" id="roomName"></div><div class="sub" id="roomSub"></div></div>
+        </div>
+        <div class="messages" id="messages"></div>
+        <div class="typing" id="typing"></div>
+        <div class="composer">
+          <input type="text" id="msgInput" placeholder="Write a message..." autocomplete="off">
+          <button class="btn" id="sendBtn">Send</button>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ===== Me ===== -->
+    <section class="view" id="view-me">
+      <div class="pad" id="meBody"></div>
+    </section>
+ 
+  </main>
+ 
+  <nav class="tabbar" id="tabbar">
+    <button class="tab active" data-view="map"><span class="ico">🗺️</span>Map</button>
+    <button class="tab" data-view="data"><span class="ico">📊</span>Data</button>
+    <button class="tab" data-view="chat"><span class="ico">💬</span>Chat<span class="count" id="chatCount"></span></button>
+    <button class="tab" data-view="me"><span class="ico">🙂</span>Me</button>
+  </nav>
+ 
+  <!-- ===== City bottom sheet ===== -->
+  <div class="overlay bottom" id="sheetOverlay">
+    <div class="sheet" id="sheet"></div>
+  </div>
+ 
+  <!-- ===== Centre modals ===== -->
+  <div class="overlay center" id="modalOverlay">
+ 
+    <div class="modal" id="m-login" style="--c: var(--yellow)">
+      <p class="step">Step 1 of 3</p>
+      <h2>Welcome</h2>
+      <p class="intro">Meet the other students in your online course, wherever they are in the world.</p>
+      <div class="field">
+        <label for="nick">Nickname</label>
+        <input type="text" id="nick" placeholder="e.g. Gona" maxlength="16">
+        <p class="hint">Other students see this, not your real name.</p>
+      </div>
+      <div class="field">
+        <label for="email">Student email</label>
+        <input type="email" id="email" placeholder="abcd0001@student.monash.edu">
+      </div>
+      <div class="field">
+        <label for="pw">Password</label>
+        <input type="password" id="pw" placeholder="Password">
+        <p class="error" id="loginErr"></p>
+      </div>
+      <button class="btn full" id="loginBtn">Log in</button>
+      <p class="note">Prototype only. This app does not connect to Monash servers.</p>
+    </div>
+ 
+    <div class="modal" id="m-consent" style="--c: var(--mint)">
+      <p class="step">Step 2 of 3</p>
+      <h2>What will you share?</h2>
+      <p class="intro">Turn on each item you are happy to share. You can only see other students' data for the items you share.</p>
+      <div id="toggles"></div>
+      <label class="agree">
+        <input type="checkbox" id="agree">
+        <span>I agree to share the items I turned on with other logged-in students. My email is never shown, and my location is only shown at city level.</span>
+      </label>
+      <p class="error" id="consentErr"></p>
+      <button class="btn full" id="consentBtn">Save and continue</button>
+    </div>
+ 
+    <div class="modal" id="m-data" style="--c: var(--lavender)">
+      <p class="step">Step 3 of 3</p>
+      <h2>Add your data</h2>
+      <p class="intro">Only the items you chose to share are asked here.</p>
+      <div class="ftm-help" id="ftmHelp">
+        <b>How to open Field Test Mode</b><br>
+        iPhone: dial <code>*3001#12345#*</code> and press call.<br>
+        Android: the code depends on your phone, for example <code>*#0011#</code> on many Samsung phones.
+      </div>
+      <div id="inputs"></div>
+      <p class="error" id="dataErr"></p>
+      <div class="row-btns">
+        <button class="btn ghost" id="skipBtn">Skip for now</button>
+        <button class="btn" id="saveDataBtn">Save</button>
+      </div>
+    </div>
+ 
+    <div class="modal" id="m-confirm" style="--c: var(--pink)">
+      <h2>Delete my data?</h2>
+      <p class="intro">Your data, your pin on the map and your chats will be removed from this device. You cannot undo this.</p>
+      <div class="row-btns">
+        <button class="btn ghost" id="cancelDel">Cancel</button>
+        <button class="btn" style="background:var(--danger)" id="confirmDel">Delete</button>
+      </div>
+    </div>
+ 
+  </div>
+</div>
+ 
+<script>
+  /* ================= Data ================= */
+  var CITIES = {
+    "Melbourne":    { country: "Australia",   flag: "🇦🇺", lat: -37.81, lng: 144.96, tz: "Australia/Melbourne" },
+    "Sydney":       { country: "Australia",   flag: "🇦🇺", lat: -33.87, lng: 151.21, tz: "Australia/Sydney" },
+    "Mumbai":       { country: "India",       flag: "🇮🇳", lat: 19.08,  lng: 72.88,  tz: "Asia/Kolkata" },
+    "Delhi":        { country: "India",       flag: "🇮🇳", lat: 28.61,  lng: 77.21,  tz: "Asia/Kolkata" },
+    "Shanghai":     { country: "China",       flag: "🇨🇳", lat: 31.23,  lng: 121.47, tz: "Asia/Shanghai" },
+    "Hanoi":        { country: "Vietnam",     flag: "🇻🇳", lat: 21.03,  lng: 105.85, tz: "Asia/Ho_Chi_Minh" },
+    "Jakarta":      { country: "Indonesia",   flag: "🇮🇩", lat: -6.21,  lng: 106.85, tz: "Asia/Jakarta" },
+    "Kuala Lumpur": { country: "Malaysia",    flag: "🇲🇾", lat: 3.14,   lng: 101.69, tz: "Asia/Kuala_Lumpur" },
+    "Singapore":    { country: "Singapore",   flag: "🇸🇬", lat: 1.35,   lng: 103.82, tz: "Asia/Singapore" },
+    "Colombo":      { country: "Sri Lanka",   flag: "🇱🇰", lat: 6.93,   lng: 79.86,  tz: "Asia/Colombo" },
+    "Kathmandu":    { country: "Nepal",       flag: "🇳🇵", lat: 27.72,  lng: 85.32,  tz: "Asia/Kathmandu" },
+    "Seoul":        { country: "South Korea", flag: "🇰🇷", lat: 37.57,  lng: 126.98, tz: "Asia/Seoul" },
+    "Manila":       { country: "Philippines", flag: "🇵🇭", lat: 14.6,   lng: 120.98, tz: "Asia/Manila" },
+    "Nairobi":      { country: "Kenya",       flag: "🇰🇪", lat: -1.29,  lng: 36.82,  tz: "Africa/Nairobi" },
+    "London":       { country: "UK",          flag: "🇬🇧", lat: 51.51,  lng: -0.13,  tz: "Europe/London" },
+    "Toronto":      { country: "Canada",      flag: "🇨🇦", lat: 43.65,  lng: -79.38, tz: "America/Toronto" },
+    "São Paulo":    { country: "Brazil",      flag: "🇧🇷", lat: -23.55, lng: -46.63, tz: "America/Sao_Paulo" }
+  };
+ 
+  var SEED = [
+    { id: "s01", nick: "Priya",   city: "Mumbai",       provider: "Jio",          rsrp: -98,  phone: "iPhone 13",     altitude: 14,   chat: true },
+    { id: "s02", nick: "Wei",     city: "Shanghai",     provider: "China Mobile", rsrp: -84,  phone: "Xiaomi 13",     altitude: 4,    chat: true },
+    { id: "s03", nick: "Linh",    city: "Hanoi",        provider: "Viettel",      rsrp: -91,  phone: "Galaxy A54",    altitude: 12,   chat: true },
+    { id: "s04", nick: "Budi",    city: "Jakarta",      provider: "Telkomsel",    rsrp: -104, phone: "Oppo Reno 8",   altitude: 8,    chat: true },
+    { id: "s05", nick: "Aisha",   city: "Kuala Lumpur", provider: "Maxis",        rsrp: -88,  phone: "iPhone 14",     altitude: 61,   chat: true },
+    { id: "s06", nick: "Nimal",   city: "Colombo",      provider: "Dialog",       rsrp: -101, phone: "Galaxy S22",    altitude: 5,    chat: true },
+    { id: "s07", nick: "Sita",    city: "Kathmandu",    provider: "Ncell",        rsrp: -109, phone: "Redmi Note 12", altitude: 1400, chat: true },
+    { id: "s08", nick: "Jisoo",   city: "Seoul",        provider: "SK Telecom",   rsrp: -79,  phone: "Galaxy S24",    altitude: 38,   chat: true },
+    { id: "s09", nick: "Paolo",   city: "Manila",       provider: "Globe",        rsrp: -103, phone: "iPhone 12",     altitude: 16,   chat: true },
+    { id: "s10", nick: "Mei",     city: "Singapore",    provider: "Singtel",      rsrp: -80,  phone: "iPhone 15",     altitude: 15,   chat: true },
+    { id: "s11", nick: "Wanjiru", city: "Nairobi",      provider: "Safaricom",    rsrp: -95,  phone: "Pixel 7",       altitude: 1795, chat: true },
+    { id: "s12", nick: "Tom",     city: "London",       provider: "EE",           rsrp: -90,  phone: "Pixel 8",       altitude: 11,   chat: true },
+    { id: "s13", nick: "Sam",     city: "Toronto",      provider: "Rogers",       rsrp: -87,  phone: "iPhone 14",     altitude: 76,   chat: true },
+    { id: "s14", nick: "Lucas",   city: "São Paulo",    provider: "Vivo",         rsrp: -97,  phone: "Moto G84",      altitude: 760,  chat: true },
+    { id: "s15", nick: "Arjun",   city: "Delhi",        provider: "Airtel",       rsrp: -93,  phone: "OnePlus 11",    altitude: 216,  chat: true },
+    { id: "s16", nick: "Emma",    city: "Melbourne",    provider: "Telstra",      rsrp: -82,  phone: "iPhone 15",     altitude: 31,   chat: true },
+    { id: "s17", nick: "Ravi",    city: "Sydney",       provider: "Optus",        rsrp: -94,  phone: "Galaxy S23",    altitude: 58,   chat: false }
+  ];
+ 
+  var FIELDS = [
+    { key: "location", label: "My city and country", hint: "Shown on the map at city level only" },
+    { key: "provider", label: "Mobile provider",     hint: "e.g. Jio, Telstra, Globe" },
+    { key: "rsrp",     label: "Signal (RSRP)",       hint: "From Field Test Mode, e.g. -95 dBm" },
+    { key: "phone",    label: "Phone model",         hint: "e.g. iPhone 14" },
+    { key: "altitude", label: "Altitude",            hint: "Height above sea level (m)" },
+    { key: "chat",     label: "Let others message me", hint: "You can turn this off any time" }
+  ];
+  var DATA_FIELDS = FIELDS.filter(function (f) { return f.key !== "chat"; });
+  var DEFAULT_SHARE = { location: true, provider: true, rsrp: true, phone: false, altitude: false, chat: true };
+  var COLOURS = ["var(--pink)", "var(--yellow)", "var(--mint)", "var(--lavender)"];
+  var REPLIES = [
+    "Nice to meet you! 😊",
+    "What time is it there now?",
+    "My signal is pretty bad today haha",
+    "Have you started the assignment yet?",
+    "Let's compare our data later!",
+    "How is the weather where you are?"
+  ];
+ 
+  var now = Date.now();
+  var SEED_CHATS = {
+    group: [
+      { from: "s08", text: "Hi everyone! Good evening from Seoul 🌙", t: now - 3600000 * 5 },
+      { from: "s12", text: "Morning from London ☕ Just started my day.", t: now - 3600000 * 4 },
+      { from: "s07", text: "My altitude is 1400 m. Is anyone higher than me?", t: now - 3600000 * 3 },
+      { from: "s11", text: "Nairobi is 1795 m! 😄", t: now - 3600000 * 2.5 },
+      { from: "s04", text: "Why is my signal so weak in Jakarta? -104 dBm 😭", t: now - 3600000 }
+    ],
+    s01: [
+      { from: "s01", text: "Hi! I saw we are in the same data science unit 👋", t: now - 1800000 }
+    ]
+  };
+ 
+  /* ================= State ================= */
+  var state = { user: null, share: null, mine: null, chats: null, unread: null };
+  var currentView = "map";
+  var currentRoom = null;
+  var map = null, markerLayer = null;
+ 
+  function load(k) { try { var v = localStorage.getItem("cs2_" + k); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+  function save(k, v) { try { if (v === null) localStorage.removeItem("cs2_" + k); else localStorage.setItem("cs2_" + k, JSON.stringify(v)); } catch (e) {} }
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+ 
+  /* ================= Helpers ================= */
+  function student(id) {
+    if (id === "me") return meRecord();
+    for (var i = 0; i < SEED.length; i++) if (SEED[i].id === id) return SEED[i];
+    return null;
+  }
+  function meRecord() {
+    var r = { id: "me", nick: state.user ? state.user.nick : "You", chat: !!(state.share && state.share.chat) };
+    if (state.mine) for (var k in state.mine) r[k] = state.mine[k];
+    return r;
+  }
+  function allStudents() {
+    var list = SEED.slice();
+    if (state.mine && state.share.location && state.mine.city) list.push(meRecord());
+    return list;
+  }
+  function colour(id) {
+    var h = 0; for (var i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 997;
+    return id === "me" ? "var(--ink)" : COLOURS[h % COLOURS.length];
+  }
+  function avatar(p) { return '<div class="avatar" style="background:' + colour(p.id) + (p.id === "me" ? ';color:#fff' : '') + '">' + esc(p.nick.charAt(0).toUpperCase()) + '</div>'; }
+  function myTz() {
+    if (state.mine && state.mine.city && CITIES[state.mine.city]) return CITIES[state.mine.city].tz;
+    try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (e) { return "UTC"; }
+  }
+  function timeIn(tz) { return new Intl.DateTimeFormat("en-AU", { hour: "numeric", minute: "2-digit", timeZone: tz }).format(new Date()); }
+  function hourIn(tz) { return Number(new Intl.DateTimeFormat("en-GB", { hour: "2-digit", hourCycle: "h23", timeZone: tz }).format(new Date())); }
+  function isAwake(tz) { var h = hourIn(tz); return h >= 7 && h < 23; }
+  function offsetMin(tz) {
+    var d = new Date();
+    var local = new Date(d.toLocaleString("en-US", { timeZone: tz }));
+    var utc = new Date(d.toLocaleString("en-US", { timeZone: "UTC" }));
+    return Math.round((local - utc) / 60000);
+  }
+  function diffText(tz) {
+    var diff = offsetMin(tz) - offsetMin(myTz());
+    if (diff === 0) return "same time as you";
+    var a = Math.abs(diff), h = Math.floor(a / 60), m = a % 60;
+    return h + "h" + (m ? " " + m + "m" : "") + (diff > 0 ? " ahead of you" : " behind you");
+  }
+  function awakeBadge(tz) {
+    return isAwake(tz) ? '<span class="badge awake">Awake</span>' : '<span class="badge asleep">🌙 Probably asleep</span>';
+  }
+  function quality(r) {
+    if (r >= -80) return ["Excellent", "q-excellent"];
+    if (r >= -90) return ["Good", "q-good"];
+    if (r >= -100) return ["Fair", "q-fair"];
+    return ["Poor", "q-poor"];
+  }
+  function clock(t) { return new Intl.DateTimeFormat("en-AU", { hour: "numeric", minute: "2-digit" }).format(new Date(t)); }
+ 
+  /* ================= Modals ================= */
+  function openModal(id) {
+    $("modalOverlay").classList.add("show");
+    ["m-login", "m-consent", "m-data", "m-confirm"].forEach(function (m) { $(m).classList.toggle("show", m === id); });
+  }
+  function closeModal() { $("modalOverlay").classList.remove("show"); }
+ 
+  /* Step 1: Log in */
+  $("loginBtn").addEventListener("click", function () {
+    var nick = $("nick").value.trim(), email = $("email").value.trim().toLowerCase(), pw = $("pw").value, err = "";
+    if (!nick) err = "Enter a nickname.";
+    else if (!/^[^@\s]+@student\.monash\.edu$/.test(email)) err = "Use your student email (ending in @student.monash.edu).";
+    else if (!pw) err = "Enter a password.";
+    $("loginErr").textContent = err;
+    if (err) return;
+    state.user = { nick: nick, email: email };
+    save("user", state.user);
+    buildToggles();
+    openModal("m-consent");
+  });
+  ["nick", "email", "pw"].forEach(function (id) { $(id).addEventListener("input", function () { $("loginErr").textContent = ""; }); });
+ 
+  /* Step 2: Consent */
+  function buildToggles() {
+    var s = state.share || DEFAULT_SHARE;
+    $("toggles").innerHTML = FIELDS.map(function (f) {
+      return '<div class="toggle-row"><div>' + f.label + '<small>' + f.hint + '</small></div>' +
+        '<label class="switch"><input type="checkbox" data-key="' + f.key + '"' + (s[f.key] ? " checked" : "") + '><span class="slider"></span></label></div>';
+    }).join("");
+    $("agree").checked = !!state.share;
+    $("consentErr").textContent = "";
+  }
+  $("consentBtn").addEventListener("click", function () {
+    var share = {}, count = 0;
+    document.querySelectorAll("#toggles input").forEach(function (i) { share[i.dataset.key] = i.checked; if (i.checked) count++; });
+    var err = "";
+    if (count === 0) err = "Turn on at least one item to join.";
+    else if (!$("agree").checked) err = "Tick the box to agree before you continue.";
+    $("consentErr").textContent = err;
+    if (err) return;
+    var first = !state.share;
+    state.share = share;
+    save("share", share);
+    if (state.mine) {
+      if (!share.location) delete state.mine.city;
+      DATA_FIELDS.forEach(function (f) { if (f.key !== "location" && !share[f.key]) delete state.mine[f.key]; });
+      save("mine", state.mine);
+    }
+    var needsData = DATA_FIELDS.some(function (f) { return share[f.key]; });
+    if (first && needsData) { buildInputs(); openModal("m-data"); }
+    else { closeModal(); startApp(); }
+  });
+  $("agree").addEventListener("change", function () { $("consentErr").textContent = ""; });
+ 
+  /* Step 3: Data */
+  function cityOptions(selected) {
+    var byCountry = {};
+    Object.keys(CITIES).forEach(function (c) { var k = CITIES[c].country; (byCountry[k] = byCountry[k] || []).push(c); });
+    return '<option value="">Choose your city...</option>' + Object.keys(byCountry).sort().map(function (country) {
+      return '<optgroup label="' + esc(country) + '">' + byCountry[country].map(function (c) {
+        return '<option value="' + esc(c) + '"' + (selected === c ? " selected" : "") + '>' + CITIES[c].flag + " " + esc(c) + '</option>';
+      }).join("") + '</optgroup>';
+    }).join("");
+  }
+  function buildInputs() {
+    var mine = state.mine || {}, s = state.share, html = "";
+    if (s.location) html += '<div class="field"><label for="in-city">City</label><select id="in-city">' + cityOptions(mine.city) + '</select></div>';
+    if (s.provider) html += '<div class="field"><label for="in-provider">Mobile provider</label><input type="text" id="in-provider" placeholder="e.g. Telstra" value="' + esc(mine.provider || "") + '"></div>';
+    if (s.rsrp) html += '<div class="field"><label for="in-rsrp">Signal, RSRP (dBm)</label><input type="number" id="in-rsrp" placeholder="-95" value="' + esc(mine.rsrp !== undefined ? mine.rsrp : "") + '"></div>';
+    if (s.phone) html += '<div class="field"><label for="in-phone">Phone model</label><input type="text" id="in-phone" placeholder="e.g. iPhone 14" value="' + esc(mine.phone || "") + '"></div>';
+    if (s.altitude) html += '<div class="field"><label for="in-altitude">Altitude (m)</label><input type="number" id="in-altitude" placeholder="40" value="' + esc(mine.altitude !== undefined ? mine.altitude : "") + '"></div>';
+    $("ftmHelp").style.display = s.rsrp ? "block" : "none";
+    $("inputs").innerHTML = html || '<p class="muted">You are not sharing any data items. You can change this in Me.</p>';
+    $("dataErr").textContent = "";
+  }
+  $("saveDataBtn").addEventListener("click", function () {
+    var s = state.share, rec = {}, err = "";
+    if (s.location) { var c = $("in-city").value; if (!c) err = "Choose your city."; else rec.city = c; }
+    if (!err && s.provider) { var p = $("in-provider").value.trim(); if (p) rec.provider = p; }
+    if (!err && s.rsrp) {
+      var v = $("in-rsrp").value.trim();
+      if (v !== "") { var n = Number(v); if (isNaN(n) || n > -44 || n < -140) err = "RSRP must be between -140 and -44 dBm."; else rec.rsrp = Math.round(n); }
+    }
+    if (!err && s.phone) { var ph = $("in-phone").value.trim(); if (ph) rec.phone = ph; }
+    if (!err && s.altitude) {
+      var a = $("in-altitude").value.trim();
+      if (a !== "") { if (isNaN(Number(a))) err = "Altitude must be a number."; else rec.altitude = Math.round(Number(a)); }
+    }
+    $("dataErr").textContent = err;
+    if (err) return;
+    state.mine = rec;
+    save("mine", rec);
+    closeModal();
+    startApp();
+  });
+  $("inputs").addEventListener("input", function () { $("dataErr").textContent = ""; });
+  $("skipBtn").addEventListener("click", function () { closeModal(); startApp(); });
+ 
+  /* Delete */
+  $("cancelDel").addEventListener("click", closeModal);
+  $("confirmDel").addEventListener("click", function () {
+    state.mine = null; save("mine", null);
+    state.chats = JSON.parse(JSON.stringify(SEED_CHATS)); save("chats", state.chats);
+    state.unread = { s01: 1 }; save("unread", state.unread);
+    closeModal(); renderAll();
+  });
+ 
+  /* ================= Tabs ================= */
+  document.querySelectorAll(".tab").forEach(function (t) {
+    t.addEventListener("click", function () { showView(t.dataset.view); });
+  });
+  function showView(name) {
+    currentView = name;
+    document.querySelectorAll(".tab").forEach(function (t) { t.classList.toggle("active", t.dataset.view === name); });
+    ["map", "data", "chat", "me"].forEach(function (v) { $("view-" + v).classList.toggle("show", v === name); });
+    $("content").scrollTop = 0;
+    if (name === "map") renderMap();
+    if (name === "data") renderData();
+    if (name === "chat") { if (currentRoom) openRoom(currentRoom); else showChatList(); }
+    if (name === "me") renderMe();
+  }
+ 
+  /* ================= Map ================= */
+  function renderChips() {
+    var cities = {};
+    allStudents().forEach(function (p) { if (p.city) cities[p.city] = true; });
+    var mineCity = state.mine && state.mine.city;
+    var list = Object.keys(cities).sort(function (a, b) { return offsetMin(CITIES[b].tz) - offsetMin(CITIES[a].tz); });
+    var awake = 0;
+    allStudents().forEach(function (p) { if (p.city && p.id !== "me" && isAwake(CITIES[p.city].tz)) awake++; });
+    $("awakeCount").textContent = awake + " awake now";
+    $("chips").innerHTML = list.map(function (c) {
+      var info = CITIES[c];
+      return '<div class="chip' + (c === mineCity ? " me" : "") + (isAwake(info.tz) ? "" : " night") + '" data-city="' + esc(c) + '">' +
+        info.flag + " " + esc(c) + '<b>' + timeIn(info.tz) + (isAwake(info.tz) ? "" : " 🌙") + '</b></div>';
+    }).join("");
+    document.querySelectorAll("#chips .chip").forEach(function (el) {
+      el.addEventListener("click", function () { var c = el.dataset.city; if (map) map.flyTo([CITIES[c].lat, CITIES[c].lng], 4, { duration: 0.8 }); openCitySheet(c); });
+    });
+  }
+  function renderMap() {
+    renderChips();
+    if (!state.share.location) {
+      $("map").style.display = "none";
+      $("mapFallback").style.display = "grid";
+      $("mapFallback").innerHTML = '<div class="locked">🔒 Share your city to see where other students are.<br><br><button class="btn small" onclick="showView(\'me\')">Change what I share</button></div>';
+      return;
+    }
+    if (typeof L === "undefined") {
+      $("map").style.display = "none";
+      $("mapFallback").style.display = "grid";
+      $("mapFallback").textContent = "The map could not load. Check your internet connection.";
+      return;
+    }
+    $("map").style.display = "block";
+    $("mapFallback").style.display = "none";
+    if (!map) {
+      map = L.map("map", { zoomControl: false, worldCopyJump: true }).setView([15, 95], 2);
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+        attribution: "&copy; OpenStreetMap &copy; CARTO", subdomains: "abcd", minZoom: 1, maxZoom: 10
+      }).addTo(map);
+      markerLayer = L.layerGroup().addTo(map);
+    }
+    setTimeout(function () { map.invalidateSize(); }, 60);
+    markerLayer.clearLayers();
+    var groups = {};
+    allStudents().forEach(function (p) { if (p.city) (groups[p.city] = groups[p.city] || []).push(p); });
+    var mineCity = state.mine && state.mine.city;
+    Object.keys(groups).forEach(function (c) {
+      var info = CITIES[c];
+      var icon = L.divIcon({
+        className: "pin-wrap", iconSize: null,
+        html: '<div class="pin' + (c === mineCity ? " me" : "") + '">' + info.flag + " " + groups[c].length + '</div>'
+      });
+      L.marker([info.lat, info.lng], { icon: icon }).addTo(markerLayer).on("click", function () { openCitySheet(c); });
+    });
+  }
+ 
+  function personDetails(p) {
+    var parts = [], s = state.share;
+    if (s.provider && p.provider) parts.push(esc(p.provider));
+    if (s.rsrp && p.rsrp !== undefined) parts.push(p.rsrp + " dBm");
+    if (s.phone && p.phone) parts.push(esc(p.phone));
+    if (s.altitude && p.altitude !== undefined) parts.push(p.altitude + " m");
+    return parts.join(" · ");
+  }
+  function openCitySheet(c) {
+    var info = CITIES[c];
+    var people = allStudents().filter(function (p) { return p.city === c; });
+    var html = '<div class="city-head"><span class="flag">' + info.flag + '</span><div><h3>' + esc(c) + '</h3>' +
+      '<div class="muted" style="font-size:0.85rem">' + esc(info.country) + '</div></div></div>' +
+      '<div class="time-box"><div class="big">' + timeIn(info.tz) + '</div>' +
+      '<div class="muted" style="font-size:0.82rem;margin-bottom:6px">' + diffText(info.tz) + '</div>' + awakeBadge(info.tz) + '</div>';
+    html += people.map(function (p) {
+      var btn = "";
+      if (p.id === "me") btn = '<span class="badge you">You</span>';
+      else if (!p.chat) btn = '<span class="muted" style="font-size:0.75rem">Chat off</span>';
+      else if (!state.share.chat) btn = '<span class="muted" style="font-size:0.75rem">Turn on chat</span>';
+      else btn = '<button class="btn small" data-hi="' + p.id + '">Say hi</button>';
+      var det = personDetails(p);
+      return '<div class="person">' + avatar(p) + '<div class="info"><div class="name">' + esc(p.nick) + '</div>' +
+        (det ? '<div class="sub">' + det + '</div>' : '') + '</div>' + btn + '</div>';
+    }).join("");
+    $("sheet").innerHTML = html;
+    $("sheet").querySelectorAll("[data-hi]").forEach(function (b) {
+      b.addEventListener("click", function () { closeSheet(); startDM(b.dataset.hi); });
+    });
+    $("sheetOverlay").classList.add("show");
+  }
+  function closeSheet() { $("sheetOverlay").classList.remove("show"); }
+  $("sheetOverlay").addEventListener("click", function (e) { if (e.target === this) closeSheet(); });
+ 
+  /* ================= Data ================= */
+  function renderData() {
+    var s = state.share, all = allStudents(), html = "";
+    var countries = {};
+    all.forEach(function (p) { if (p.city) countries[CITIES[p.city].country] = true; });
+ 
+    // Overview
+    html += '<section class="block"><h2 class="section">Overview</h2><div class="stats">' +
+      '<div class="stat" style="--c:var(--yellow)"><div class="label">Students</div><div class="value">' + all.length + '</div></div>' +
+      '<div class="stat" style="--c:' + (s.location ? 'var(--mint)' : 'var(--line)') + '"><div class="label">Countries</div><div class="value">' + (s.location ? Object.keys(countries).length : "&#128274;") + '</div></div>';
+    var awake = all.filter(function (p) { return p.city && p.id !== "me" && isAwake(CITIES[p.city].tz); }).length;
+    html += '<div class="stat" style="--c:' + (s.location ? 'var(--lavender)' : 'var(--line)') + '"><div class="label">Awake now</div><div class="value">' + (s.location ? awake : "&#128274;") + '</div></div>';
+    html += '</div></section>';
+ 
+    // Signal by country
+    html += '<section class="block"><h2 class="section">Signal by country</h2>';
+    var rows = [];
+    if (s.rsrp && s.location) {
+      var g = {};
+      all.forEach(function (p) {
+        if (p.rsrp === undefined || !p.city) return;
+        var k = CITIES[p.city].flag + " " + CITIES[p.city].country;
+        (g[k] = g[k] || []).push(p.rsrp);
+      });
+      rows = Object.keys(g).map(function (k) {
+        var sum = g[k].reduce(function (a, b) { return a + b; }, 0);
+        return { name: k, avg: Math.round(sum / g[k].length) };
+      }).sort(function (a, b) { return b.avg - a.avg; });
+      html += '<div class="panel"><b>Average RSRP (dBm)</b>';
+      rows.forEach(function (r) {
+        var pct = Math.max(4, Math.min(100, Math.round((r.avg + 140) / 96 * 100)));
+        html += '<div class="bar-row"><span>' + esc(r.name) + '</span><div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;--c:var(--mint)"></div></div><span class="bar-val">' + r.avg + '</span></div>';
+      });
+      html += '<p class="hint">Closer to 0 means a stronger signal.</p>';
+      var weakest = rows[rows.length - 1];
+      if (weakest && s.chat) html += '<div style="margin-top:14px"><button class="btn ghost small" id="askBtn" data-c="' + esc(weakest.name) + '" data-v="' + weakest.avg + '">Ask the class about ' + esc(weakest.name) + '</button></div>';
+      html += '</div>';
+    } else {
+      html += '<div class="locked">&#128274; Share your city and signal to compare countries.</div>';
+    }
+    html += '</section>';
+ 
+    // Altitude
+    html += '<section class="block"><h2 class="section">Highest up</h2>';
+    if (s.altitude) {
+      var high = all.filter(function (p) { return p.altitude !== undefined; }).sort(function (a, b) { return b.altitude - a.altitude; }).slice(0, 3);
+      html += '<div class="panel">' + high.map(function (p, i) {
+        return '<div class="person">' + avatar(p) + '<div class="info"><div class="name">' + (i + 1) + ". " + esc(p.nick) + '</div>' +
+          '<div class="sub">' + (s.location && p.city ? CITIES[p.city].flag + " " + esc(p.city) : "") + '</div></div><b>' + p.altitude + ' m</b></div>';
+      }).join("") + '</div>';
+    } else {
+      html += '<div class="locked">&#128274; Share your altitude to see who lives highest up.</div>';
+    }
+    html += '</section>';
+ 
+    // Table
+    var cols = DATA_FIELDS.filter(function (f) { return s[f.key]; });
+    html += '<section class="block"><h2 class="section">Shared data</h2><div class="table-wrap"><table><thead><tr><th>Student</th>';
+    cols.forEach(function (f) { html += '<th>' + (f.key === "location" ? "City" : f.label) + '</th>'; });
+    if (s.rsrp) html += '<th>Signal</th>';
+    html += '</tr></thead><tbody>';
+    all.forEach(function (p) {
+      html += '<tr' + (p.id === "me" ? ' class="me"' : '') + '><td>' + esc(p.nick) + '</td>';
+      cols.forEach(function (f) {
+        var v = f.key === "location" ? (p.city ? CITIES[p.city].flag + " " + p.city : undefined) : p[f.key];
+        html += '<td>' + (v !== undefined && v !== "" ? esc(v) : "-") + '</td>';
+      });
+      if (s.rsrp) {
+        if (p.rsrp !== undefined) { var q = quality(p.rsrp); html += '<td><span class="badge ' + q[1] + '">' + q[0] + '</span></td>'; }
+        else html += '<td>-</td>';
+      }
+      html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+    var hidden = DATA_FIELDS.filter(function (f) { return !s[f.key]; }).map(function (f) { return f.label; });
+    html += '<p class="hint">' + (hidden.length ? "Hidden because you don't share them: " + hidden.join(", ") + "." : "You share everything, so you can see all data types.") + '</p>';
+    html += '<div style="margin-top:16px"><button class="btn ghost" id="csvBtn">Download CSV</button></div></section>';
+ 
+    $("dataBody").innerHTML = html;
+    if ($("askBtn")) $("askBtn").addEventListener("click", function () {
+      currentRoom = "group"; showView("chat");
+      $("msgInput").value = "Why is the signal in " + this.dataset.c.replace(/^\S+\s/, "") + " so weak? Average " + this.dataset.v + " dBm 🤔";
+      $("msgInput").focus();
+    });
+    $("csvBtn").addEventListener("click", downloadCsv);
+  }
+ 
+  function downloadCsv() {
+    var cols = DATA_FIELDS.filter(function (f) { return state.share[f.key]; });
+    var rows = [["student"].concat(cols.map(function (f) { return f.key === "location" ? "city,country" : f.key; }).join(",").split(","))];
+    allStudents().forEach(function (p) {
+      var r = [p.nick];
+      cols.forEach(function (f) {
+        if (f.key === "location") { r.push(p.city || ""); r.push(p.city ? CITIES[p.city].country : ""); }
+        else r.push(p[f.key] !== undefined ? p[f.key] : "");
+      });
+      rows.push(r);
+    });
+    var csv = rows.map(function (r) { return r.map(function (v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(","); }).join("\n");
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    a.download = "connect-students-data.csv";
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+ 
+  /* ================= Chat ================= */
+  function totalUnread() { var n = 0; for (var k in state.unread) n += state.unread[k]; return n; }
+  function updateBadge() {
+    var n = totalUnread();
+    $("chatCount").textContent = n;
+    $("chatCount").style.display = n ? "inline-block" : "none";
+  }
+  function roomInfo(id) {
+    if (id === "group") return { nick: "Whole class", id: "group", sub: allStudents().length + " students" };
+    var p = student(id);
+    var sub = p.city && state.share.location ? CITIES[p.city].flag + " " + p.city + " · " + timeIn(CITIES[p.city].tz) : "Location hidden";
+    return { nick: p.nick, id: p.id, sub: sub };
+  }
+  function showChatList() {
+    $("chatRoom").classList.remove("show");
+    $("chatList").style.display = "block";
+    var html = "";
+    if (!state.share.chat) html += '<div class="pad" style="padding-bottom:0"><div class="locked">🔒 Chat is off. Turn on "Let others message me" in Me to chat.</div></div>';
+    html += '<div class="section-label">Group</div>' + chatItem("group");
+    var dms = Object.keys(state.chats).filter(function (k) { return k !== "group"; });
+    dms.sort(function (a, b) { return lastT(b) - lastT(a); });
+    html += '<div class="section-label">Direct messages</div>';
+    html += dms.length ? dms.map(chatItem).join("") : '<p class="pad muted" style="font-size:0.88rem">No messages yet. Tap a pin on the map and say hi.</p>';
+    $("chatList").innerHTML = html;
+    $("chatList").querySelectorAll("[data-room]").forEach(function (el) {
+      el.addEventListener("click", function () { if (state.share.chat) openRoom(el.dataset.room); });
+    });
+  }
+  function lastT(id) { var m = state.chats[id]; return m && m.length ? m[m.length - 1].t : 0; }
+  function chatItem(id) {
+    var info = roomInfo(id), msgs = state.chats[id] || [], last = msgs[msgs.length - 1], un = state.unread[id] || 0;
+    var av = id === "group" ? '<div class="avatar" style="background:var(--yellow)">🌏</div>' : avatar(info);
+    return '<div class="chat-item" data-room="' + id + '">' + av + '<div class="info"><div class="name">' + esc(info.nick) +
+      '<small>' + (last ? clock(last.t) : "") + '</small></div><div class="last">' + (last ? esc(last.text) : "Say hi!") + '</div></div>' +
+      (un ? '<span class="unread">' + un + '</span>' : '') + '</div>';
+  }
+  function startDM(id) {
+    if (!state.chats[id]) { state.chats[id] = []; save("chats", state.chats); }
+    currentRoom = id;
+    showView("chat");
+  }
+  function openRoom(id) {
+    currentRoom = id;
+    state.unread[id] = 0; save("unread", state.unread); updateBadge();
+    var info = roomInfo(id);
+    $("chatList").style.display = "none";
+    $("chatRoom").classList.add("show");
+    $("roomAvatar").outerHTML = id === "group" ? '<div class="avatar" id="roomAvatar" style="background:var(--yellow)">🌏</div>'
+      : '<div class="avatar" id="roomAvatar" style="background:' + colour(id) + '">' + esc(info.nick.charAt(0).toUpperCase()) + '</div>';
+    $("roomName").textContent = info.nick;
+    $("roomSub").textContent = info.sub;
+    $("typing").textContent = "";
+    renderMessages();
+  }
+  function renderMessages() {
+    var msgs = state.chats[currentRoom] || [];
+    $("messages").innerHTML = msgs.length ? msgs.map(function (m) {
+      var mine = m.from === "me", p = student(m.from);
+      return '<div class="msg' + (mine ? " mine" : "") + '">' +
+        (!mine && currentRoom === "group" ? '<div class="from">' + esc(p.nick) + (p.city ? " " + CITIES[p.city].flag : "") + '</div>' : '') +
+        esc(m.text) + '<div class="time">' + clock(m.t) + '</div></div>';
+    }).join("") : '<p class="muted" style="text-align:center;font-size:0.88rem">Start the conversation 👋</p>';
+    $("messages").scrollTop = $("messages").scrollHeight;
+  }
+  function send() {
+    var text = $("msgInput").value.trim();
+    if (!text || !currentRoom) return;
+    state.chats[currentRoom].push({ from: "me", text: text, t: Date.now() });
+    save("chats", state.chats);
+    $("msgInput").value = "";
+    renderMessages();
+    fakeReply(currentRoom);
+  }
+  function fakeReply(room) {
+    var from = room;
+    if (room === "group") {
+      if (Math.random() < 0.4) return;
+      var pool = SEED.filter(function (p) { return p.chat; });
+      from = pool[Math.floor(Math.random() * pool.length)].id;
+    }
+    var p = student(from);
+    setTimeout(function () { if (currentRoom === room) $("typing").textContent = p.nick + " is typing..."; }, 600);
+    setTimeout(function () {
+      if (!state.chats[room]) return;
+      state.chats[room].push({ from: from, text: REPLIES[Math.floor(Math.random() * REPLIES.length)], t: Date.now() });
+      save("chats", state.chats);
+      if (currentRoom === room && currentView === "chat") { $("typing").textContent = ""; renderMessages(); }
+      else { state.unread[room] = (state.unread[room] || 0) + 1; save("unread", state.unread); updateBadge(); }
+    }, 2000);
+  }
+  $("sendBtn").addEventListener("click", send);
+  $("msgInput").addEventListener("keydown", function (e) { if (e.key === "Enter") send(); });
+  $("roomBack").addEventListener("click", function () { currentRoom = null; showChatList(); });
+ 
+  /* ================= Me ================= */
+  function renderMe() {
+    var s = state.share, me = meRecord(), html = "";
+    var shared = FIELDS.filter(function (f) { return s[f.key]; });
+    html += '<section class="hello"><h1>Hi, ' + esc(me.nick) + '!</h1><p>' +
+      (me.city && s.location ? CITIES[me.city].flag + " " + esc(me.city) + ", " + esc(CITIES[me.city].country) + ". It is " + timeIn(CITIES[me.city].tz) + " for you. " : "Your location is hidden. ") +
+      'You share ' + shared.length + ' of ' + FIELDS.length + ' items.</p>' +
+      '<div class="actions"><button class="btn" id="editData">Add or edit my data</button>' +
+      '<button class="btn ghost" id="editShare">Change what I share</button>' +
+      '<button class="btn danger" id="delData">Delete my data</button></div></section>';
+    html += '<section class="block"><h2 class="section">What I share</h2><div class="panel"><ul class="share-list">' + FIELDS.map(function (f) {
+      var val = "";
+      if (s[f.key] && state.mine) {
+        if (f.key === "location") val = state.mine.city || "";
+        else if (f.key !== "chat" && state.mine[f.key] !== undefined) val = state.mine[f.key];
+      }
+      return '<li><span>' + f.label + (val !== "" ? ' <span class="muted">(' + esc(val) + ')</span>' : '') + '</span>' +
+        (s[f.key] ? '<span class="badge q-excellent">On</span>' : '<span class="badge" style="background:var(--line)">Off</span>') + '</li>';
+    }).join("") + '</ul><p class="hint">Your email is never shown. Your location is only shown at city level.</p></div></section>';
+    $("meBody").innerHTML = html;
+    $("editData").addEventListener("click", function () { buildInputs(); openModal("m-data"); });
+    $("editShare").addEventListener("click", function () { buildToggles(); openModal("m-consent"); });
+    $("delData").addEventListener("click", function () { openModal("m-confirm"); });
+  }
+  $("logoutBtn").addEventListener("click", function () {
+    state.user = null; save("user", null);
+    $("tabbar").classList.remove("show"); $("who").textContent = "";
+    $("logoutBtn").style.display = "none";
+    $("pw").value = "";
+    closeSheet();
+    openModal("m-login");
+  });
+ 
+  /* ================= Start ================= */
+  function renderAll() {
+    $("who").textContent = state.user ? state.user.nick : "";
+    updateBadge();
+    showView(currentView);
+  }
+  function startApp() {
+    $("tabbar").classList.add("show");
+    $("logoutBtn").style.display = "inline-block";
+    renderAll();
+  }
+ 
+  state.user = load("user");
+  state.share = load("share");
+  state.mine = load("mine");
+  state.chats = load("chats") || JSON.parse(JSON.stringify(SEED_CHATS));
+  state.unread = load("unread") || { s01: 1 };
+ 
+  if (state.user && state.share) startApp();
+  else if (state.user) { buildToggles(); openModal("m-consent"); }
+  else openModal("m-login");
+ 
+  setInterval(function () {
+    if (!state.share || !$("tabbar").classList.contains("show")) return;
+    if (currentView === "map") renderChips();
+    if (currentView === "chat" && currentRoom) $("roomSub").textContent = roomInfo(currentRoom).sub;
+  }, 30000);
+</script>
+</body>
+</html>
+ 
