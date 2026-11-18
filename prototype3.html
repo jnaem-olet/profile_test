@@ -1,1 +1,130 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Global Student Connect</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f0f4f8;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            max-width: 500px;
+            margin: auto;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        input, select, button {
+            width: 90%;
+            padding: 10px;
+            margin: 8px;
+        }
+
+        button {
+            background: #315ee8;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .student {
+            background: #e8efff;
+            padding: 12px;
+            margin: 10px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🌍 Global Student Connect</h1>
+    <p>Connect with students around the world!</p>
+
+    <h3>Create Your Profile</h3>
+
+    <input type="text" id="name" placeholder="Your Name">
+    <input type="text" id="country" placeholder="Your Country">
+    <input type="text" id="language" placeholder="Your Language">
+    <input type="text" id="interest" placeholder="Your Interests">
+
+    <button onclick="addStudent()">Register</button>
+
+    <h3>Find Students</h3>
+    <input type="text" id="search" placeholder="Search by country..."
+        oninput="displayStudents()">
+
+    <div id="studentList"></div>
+    
+    <h3>🔒 Security</h3>
+    <p>Never share your password or private information.</p>
+    <p>Only display information you are comfortable sharing.</p>
+</div>
+
+<script>
+    let students = [];
+
+    function addStudent() {
+        let name = document.getElementById("name").value.trim();
+        let country = document.getElementById("country").value.trim();
+        let language = document.getElementById("language").value.trim();
+        let interest = document.getElementById("interest").value.trim();
+
+        if (!name || !country || !language || !interest) {
+            alert("Please complete all fields!");
+            return;
+        }
+
+        students.push({
+            name: name,
+            country: country,
+            language: language,
+            interest: interest
+        });
+
+        document.getElementById("name").value = "";
+        document.getElementById("country").value = "";
+        document.getElementById("language").value = "";
+        document.getElementById("interest").value = "";
+
+        displayStudents();
+    }
+
+    function displayStudents() {
+        let search = document.getElementById("search").value.toLowerCase();
+        let list = document.getElementById("studentList");
+
+        list.innerHTML = "";
+
+        students
+            .filter(student =>
+                student.country.toLowerCase().includes(search)
+            )
+            .forEach(student => {
+                let div = document.createElement("div");
+                div.className = "student";
+
+                let title = document.createElement("strong");
+                title.textContent = student.name;
+
+                let details = document.createElement("p");
+                details.textContent =
+                    student.country + " | " +
+                    student.language + " | " +
+                    student.interest;
+
+                div.appendChild(title);
+                div.appendChild(details);
+                list.appendChild(div);
+            });
+    }
+</script>
+
+</body>
+</html>
