@@ -172,6 +172,8 @@
       transition: transform 0.2s ease;
     }
     .proto-btn:hover { transform: translateY(-4px) rotate(-0.4deg); }
+
+    .proto-btns { display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; }
   </style>
 </head>
 <body>
@@ -291,17 +293,14 @@
       </article>
 
     </div>
-
-    <section class="proto">
-    <h2 class="section-title">Prototype 1</h2>
-    <p class="section-sub">Connect Student: share and explore phone signal data</p>
-    <a class="proto-btn" href="prototype1.html">View Prototype &rarr;</a>
-  </section>
-
-       <section class="proto">
-    <h2 class="section-title">Prototype 2</h2>
-    <p class="section-sub">Connect Student: share and explore phone signal data</p>
-    <a class="proto-btn" href="prototype2.html">View Prototype &rarr;</a>
+      
+  <section class="proto">
+    <h2 class="section-title">Prototypes</h2>
+    <p class="section-sub">Click a button to open each prototype</p>
+    <div class="proto-btns">
+      <a class="proto-btn" href="prototype1.html">Prototype 1 &rarr;</a>
+      <a class="proto-btn" href="prototype2.html">Prototype 2 &rarr;</a>
+    </div>
   </section>
       
   </section>
