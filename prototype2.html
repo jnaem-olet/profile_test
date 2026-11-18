@@ -133,7 +133,8 @@
 
     .locked { background: var(--paper); border: 2px dashed var(--line); padding: 16px 18px; color: var(--muted); font-size: 0.88rem; }
 
-    .filters { display: flex; gap: 10px; margin-bottom: 14px; }
+    .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+    .filters > div { min-width: 110px; }
     .filters > div { flex: 1; }
     .filters label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; }
 
@@ -324,7 +325,7 @@
         <div id="toggles"></div>
         <label class="agree">
           <input type="checkbox" id="agree">
-          <span>I agree that the items I turn on are shared with other logged-in students. My name and email are never shown.</span>
+          <span>I agree that the items I turn on are shared with other logged-in students. My email is never shown, and my name is only shown if I turn it on.</span>
         </label>
         <p class="error" id="consentErr"></p>
         <button class="btn full" id="consentBtn">Save and continue</button>
@@ -353,6 +354,8 @@
 
   <script>
     var FIELDS = [
+      { key: "name",     label: "First name",    hint: "Show your name instead of an ID" },
+      { key: "country",  label: "Country",       hint: "Optional: where you are from" },
       { key: "provider", label: "Provider",      hint: "Telstra, Optus, Vodafone..." },
       { key: "rsrp",     label: "RSRP (dBm)",    hint: "Signal strength, e.g. -95" },
       { key: "campus",   label: "Campus",        hint: "Where you measured" },
@@ -362,26 +365,27 @@
     ];
     var PROVIDERS = ["Telstra", "Optus", "Vodafone", "Other"];
     var CAMPUSES = ["Clayton", "Caulfield", "Peninsula", "Parkville"];
+    var COUNTRIES = ["Australia", "China", "Colombia", "Hong Kong", "India", "Indonesia", "Korea", "Malaysia", "Vietnam", "Other"];
 
     var SEED = [
-      { id: "S-1024", provider: "Telstra",  rsrp: -82,  campus: "Clayton",   phone: "iPhone 14",   altitude: 82,  accel: "0.01, 0.02, 9.80" },
-      { id: "S-1031", provider: "Optus",    rsrp: -97,  campus: "Clayton",   phone: "Galaxy S23",  altitude: 79,  accel: "0.03, 0.00, 9.81" },
-      { id: "S-1046", provider: "Vodafone", rsrp: -109, campus: "Caulfield", phone: "Pixel 8",     altitude: 31,  accel: "0.00, 0.05, 9.79" },
-      { id: "S-1058", provider: "Telstra",  rsrp: -88,  campus: "Caulfield", phone: "iPhone 13",   altitude: 33,  accel: "0.02, 0.01, 9.80" },
-      { id: "S-1063", provider: "Optus",    rsrp: -101, campus: "Peninsula", phone: "iPhone 15",   altitude: 18,  accel: "0.04, 0.02, 9.82" },
-      { id: "S-1077", provider: "Telstra",  rsrp: -79,  campus: "Parkville", phone: "Galaxy A54",  altitude: 45,  accel: "0.01, 0.00, 9.81" },
-      { id: "S-1082", provider: "Vodafone", rsrp: -93,  campus: "Parkville", phone: "iPhone 12",   altitude: 44,  accel: "0.00, 0.01, 9.80" },
-      { id: "S-1095", provider: "Optus",    rsrp: -90,  campus: "Clayton",   phone: "Pixel 7",     altitude: 80,  accel: "0.02, 0.03, 9.79" },
-      { id: "S-1103", provider: "Telstra",  rsrp: -85,  campus: "Peninsula", phone: "iPhone 14",   altitude: 20,  accel: "0.01, 0.02, 9.81" },
-      { id: "S-1118", provider: "Vodafone", rsrp: -112, campus: "Clayton",   phone: "Galaxy S22",  altitude: 81,  accel: "0.05, 0.01, 9.80" },
-      { id: "S-1126", provider: "Optus",    rsrp: -94,  campus: "Caulfield", phone: "iPhone 15",   altitude: 30,  accel: "0.00, 0.02, 9.80" },
-      { id: "S-1134", provider: "Telstra",  rsrp: -91,  campus: "Clayton",   phone: "Pixel 8",     altitude: 83,  accel: "0.02, 0.00, 9.81" },
-      { id: "S-1141", provider: "Vodafone", rsrp: -99,  campus: "Peninsula", phone: "iPhone 13",   altitude: 19,  accel: "0.01, 0.04, 9.79" },
-      { id: "S-1152", provider: "Optus",    rsrp: -86,  campus: "Parkville", phone: "Galaxy S24",  altitude: 46,  accel: "0.03, 0.01, 9.80" }
+      { id: "S-1024", name: "Liam", country: "Australia", provider: "Telstra",  rsrp: -82,  campus: "Clayton",   phone: "iPhone 14",   altitude: 82,  accel: "0.01, 0.02, 9.80" },
+      { id: "S-1031", name: "Mei", country: "China", provider: "Optus",    rsrp: -97,  campus: "Clayton",   phone: "Galaxy S23",  altitude: 79,  accel: "0.03, 0.00, 9.81" },
+      { id: "S-1046", name: "Arjun", country: "India", provider: "Vodafone", rsrp: -109, campus: "Caulfield", phone: "Pixel 8",     altitude: 31,  accel: "0.00, 0.05, 9.79" },
+      { id: "S-1058", name: "Sofia", country: "Colombia", provider: "Telstra",  rsrp: -88,  campus: "Caulfield", phone: "iPhone 13",   altitude: 33,  accel: "0.02, 0.01, 9.80" },
+      { id: "S-1063", name: "Minjun", country: "Korea", provider: "Optus",    rsrp: -101, campus: "Peninsula", phone: "iPhone 15",   altitude: 18,  accel: "0.04, 0.02, 9.82" },
+      { id: "S-1077", name: "Chloe", country: "Australia", provider: "Telstra",  rsrp: -79,  campus: "Parkville", phone: "Galaxy A54",  altitude: 45,  accel: "0.01, 0.00, 9.81" },
+      { id: "S-1082", name: "Wing", country: "Hong Kong", provider: "Vodafone", rsrp: -93,  campus: "Parkville", phone: "iPhone 12",   altitude: 44,  accel: "0.00, 0.01, 9.80" },
+      { id: "S-1095", name: "Aisyah", country: "Malaysia", provider: "Optus",    rsrp: -90,  campus: "Clayton",   phone: "Pixel 7",     altitude: 80,  accel: "0.02, 0.03, 9.79" },
+      { id: "S-1103", name: "Ethan", country: "Australia", provider: "Telstra",  rsrp: -85,  campus: "Peninsula", phone: "iPhone 14",   altitude: 20,  accel: "0.01, 0.02, 9.81" },
+      { id: "S-1118", name: "Priya", country: "India", provider: "Vodafone", rsrp: -112, campus: "Clayton",   phone: "Galaxy S22",  altitude: 81,  accel: "0.05, 0.01, 9.80" },
+      { id: "S-1126", name: "Linh", country: "Vietnam", provider: "Optus",    rsrp: -94,  campus: "Caulfield", phone: "iPhone 15",   altitude: 30,  accel: "0.00, 0.02, 9.80" },
+      { id: "S-1134", name: "Hana", country: "Korea", provider: "Telstra",  rsrp: -91,  campus: "Clayton",   phone: "Pixel 8",     altitude: 83,  accel: "0.02, 0.00, 9.81" },
+      { id: "S-1141", name: "Budi", country: "Indonesia", provider: "Vodafone", rsrp: -99,  campus: "Peninsula", phone: "iPhone 13",   altitude: 19,  accel: "0.01, 0.04, 9.79" },
+      { id: "S-1152", name: "Jack", country: "Australia", provider: "Optus",    rsrp: -86,  campus: "Parkville", phone: "Galaxy S24",  altitude: 46,  accel: "0.03, 0.01, 9.80" }
     ];
 
     var state = { user: null, share: null, mine: null };
-    var filter = { campus: "All", provider: "All" };
+    var filter = { campus: "All", provider: "All", country: "All" };
 
     function load(key) {
       try { var v = localStorage.getItem("cs_" + key); return v ? JSON.parse(v) : null; }
@@ -435,7 +439,7 @@
 
     // Step 2: Consent
     function buildToggles() {
-      var share = state.share || { provider: true, rsrp: true, campus: true, phone: false, altitude: false, accel: false };
+      var share = state.share || { name: true, country: false, provider: true, rsrp: true, campus: true, phone: false, altitude: false, accel: false };
       $("toggles").innerHTML = FIELDS.map(function (f) {
         return '<div class="toggle-row"><div>' + f.label + '<small>' + f.hint + '</small></div>' +
           '<label class="switch"><input type="checkbox" data-key="' + f.key + '"' + (share[f.key] ? " checked" : "") + '>' +
@@ -472,10 +476,14 @@
       var html = "";
       FIELDS.forEach(function (f) {
         if (!state.share[f.key]) return;
+        if (f.key === "name") {
+          html += '<p class="hint" style="margin:0 0 14px">Your first name (' + esc(state.user.name) + ') will be shown to other students.</p>';
+          return;
+        }
         var val = mine[f.key] !== undefined ? esc(mine[f.key]) : "";
         html += '<div class="field"><label for="in-' + f.key + '">' + f.label + '</label>';
-        if (f.key === "provider" || f.key === "campus") {
-          var opts = f.key === "provider" ? PROVIDERS : CAMPUSES;
+        if (f.key === "provider" || f.key === "campus" || f.key === "country") {
+          var opts = f.key === "provider" ? PROVIDERS : (f.key === "campus" ? CAMPUSES : COUNTRIES);
           html += '<select id="in-' + f.key + '"><option value="">Choose...</option>' +
             opts.map(function (o) { return '<option' + (mine[f.key] === o ? " selected" : "") + '>' + o + '</option>'; }).join("") +
             '</select>';
@@ -494,6 +502,7 @@
       var rec = { id: "You" }, err = "";
       FIELDS.forEach(function (f) {
         if (!state.share[f.key] || err) return;
+        if (f.key === "name") { rec.name = state.user.name; return; }
         var v = $("in-" + f.key).value.trim();
         if (f.key === "rsrp") {
           var n = Number(v);
@@ -501,6 +510,8 @@
           rec.rsrp = Math.round(n);
         } else if (f.key === "altitude") {
           if (v !== "") { var a = Number(v); if (isNaN(a)) { err = "Altitude must be a number."; return; } rec.altitude = Math.round(a); }
+        } else if (f.key === "country") {
+          if (v) rec.country = v;
         } else if (f.key === "provider" || f.key === "campus") {
           if (!v) { err = "Choose your " + f.label.toLowerCase() + "."; return; }
           rec[f.key] = v;
@@ -552,6 +563,7 @@
       return allData().filter(function (d) {
         if (state.share.campus && filter.campus !== "All" && d.campus !== filter.campus) return false;
         if (state.share.provider && filter.provider !== "All" && d.provider !== filter.provider) return false;
+        if (state.share.country && filter.country !== "All" && d.country !== filter.country) return false;
         return true;
       });
     }
@@ -608,6 +620,11 @@
       } else {
         stats += '<div class="stat" style="--c:var(--line)"><div class="label">Best provider</div><div class="value">&#128274;</div></div>';
       }
+      if (s.country) {
+        var seen = {};
+        data.forEach(function (d) { if (d.country) seen[d.country] = true; });
+        stats += '<div class="stat" style="--c:var(--pink)"><div class="label">Countries</div><div class="value">' + Object.keys(seen).length + '</div></div>';
+      }
       $("stats").innerHTML = stats;
 
       // Charts
@@ -632,18 +649,26 @@
         f += '<div><label for="fProvider">Provider</label><select id="fProvider">' +
           ["All"].concat(PROVIDERS).map(function (o) { return '<option' + (filter.provider === o ? " selected" : "") + '>' + o + '</option>'; }).join("") + '</select></div>';
       }
+      if (s.country) {
+        f += '<div><label for="fCountry">Country</label><select id="fCountry">' +
+          ["All"].concat(COUNTRIES).map(function (o) { return '<option' + (filter.country === o ? " selected" : "") + '>' + o + '</option>'; }).join("") + '</select></div>';
+      }
       $("filters").innerHTML = f;
+      if ($("fCountry")) $("fCountry").addEventListener("change", function () { filter.country = this.value; render(); });
       if ($("fCampus")) $("fCampus").addEventListener("change", function () { filter.campus = this.value; render(); });
       if ($("fProvider")) $("fProvider").addEventListener("change", function () { filter.provider = this.value; render(); });
 
       // Table
       var t = '<table><thead><tr><th>Student</th>';
-      shared.forEach(function (fl) { t += '<th>' + fl.label + '</th>'; });
+      var cols = shared.filter(function (fl) { return fl.key !== "name"; });
+      cols.forEach(function (fl) { t += '<th>' + fl.label + '</th>'; });
       if (s.rsrp) t += '<th>Signal</th>';
       t += '</tr></thead><tbody>';
       data.forEach(function (d) {
-        t += '<tr' + (d.id === "You" ? ' class="me"' : '') + '><td>' + esc(d.id) + '</td>';
-        shared.forEach(function (fl) { t += '<td>' + (d[fl.key] !== undefined ? esc(d[fl.key]) : "-") + '</td>'; });
+        var who = (s.name && d.name) ? d.name : d.id;
+        if (d.id === "You") who = d.name ? "You (" + d.name + ")" : "You";
+        t += '<tr' + (d.id === "You" ? ' class="me"' : '') + '><td>' + esc(who) + '</td>';
+        cols.forEach(function (fl) { t += '<td>' + (d[fl.key] !== undefined ? esc(d[fl.key]) : "-") + '</td>'; });
         if (s.rsrp) {
           if (d.rsrp !== undefined) { var q = quality(d.rsrp); t += '<td><span class="badge ' + q[1] + '">' + q[0] + '</span></td>'; }
           else t += '<td>-</td>';
